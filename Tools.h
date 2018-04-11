@@ -6,7 +6,7 @@
 	#include "ProjectDefines.h"
   
 	#define SET_REGISTER(addr,value) ((*(volatile uint8_t *)addr)=value)
-	#define GET_REGISTER(addr) (*(volatile uint8_t *)addr)    //return register value  
+	#define GET_REGISTER(addr) (*(volatile uint8_t *)addr) 
 
 	#define MB_MAP_FULL(regStart, regCnt, funcPtr, isRead) {regStart,regCnt,funcPtr,isRead}
 	#define MB_READ_RANGE(regStart,regCnt,funcPtr) MB_MAP_FULL(regStart,regCnt,funcPtr,true)
