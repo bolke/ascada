@@ -62,13 +62,11 @@
     ModbusFuncPtr ReadRegister=NULL;                                                    //reading a register
     ModbusFuncPtr ExecuteFunction=NULL;                                                 //execute given function 
   } 
-  mb_t;                                                                                 //ds is short for data structure
+  mb_t;                                                                                 //type definition of modbus data structure
                         
-  extern mb_t mb_ds;                                                                    //modbus data structure
-  uint8_t mbSetup(uint32_t baudrate=DEFAULT_BAUDRATE, 
-  uint8_t slaveId=DEFAULT_SLAVE_ID);
-  void mbSerialEvent();
-  void mbTimerEvent();
+  extern mb_t mb_ds;                                                                    //modbus data structure definition / coupling with variable in cpp file
+  uint8_t mbSetup(uint32_t baudrate=DEFAULT_BAUDRATE, uint8_t slaveId=DEFAULT_SLAVE_ID);//modbus setup function, with defaults for baud and slave_id
+  void mbSerialEvent();                                                                 //called on serial event, rx, by automagic callback
+  void mbTimerEvent();                                                                  //called on timer event, used to keep track of silence, automagic callback
 
 #endif
-

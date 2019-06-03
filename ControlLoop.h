@@ -46,4 +46,3 @@
   bool clDetectAlarms();
 
 #endif
-

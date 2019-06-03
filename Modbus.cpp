@@ -27,22 +27,31 @@ uint8_t GetExpectedLength()                                                     
     }                                                                                   //otherwise just return the REQUEST_LENGTH, as by default
   }                                                                                     //if there's no function, there's no expected length.
   else                                                                                  //
+  {
     result=0;                                                                           //set to 0, try again later
+  }
   return result;                                                                        //return result;
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint8_t InitSerial(uint32_t baudrate){                                                  //initialize serial
+uint8_t InitSerial(uint32_t baudrate)                                                   //initialize serial
+{
   uint8_t result=EXCEPTION_SLAVE_DEVICE_FAILURE;                                        //preset to failure
   uint16_t silenceTicks=0;                                                              //number of ticks used to trigger timer0 compare interrupt
   if((baudrate<BAUDRATE_MIN)||(baudrate>BAUDRATE_MAX))                                  //check if baud is within range
+  {
     baudrate=DEFAULT_BAUDRATE;                                                          //if not, use default baudrate
+  }
   mb_ds.baudrate=baudrate;                                                              //save the baud
   mb_ds.silence=(8750000/mb_ds.baudrate);                                               //calculate the silence period, 8 bit per 10 baud, 3.5 char length
   silenceTicks=mb_ds.silence;                                                           //use total silence ticks as base
   while(silenceTicks>255)                                                               //create most precise 8 bit value
+  {
     silenceTicks=silenceTicks>>1;                                                       //by shifting to the right
+  }
   if(silenceTicks<255)                                                                  //make sure the silence period will be completed
+  {
     silenceTicks++;                                                                     //increment by one, a little bit extra waiting time
+  }
   cli();                                                                                //stop interrupts
   OCR0A=silenceTicks;                                                                   //setup the timer0 compare value
   TIMSK0 |= (1 << OCIE0A);                                                              //set timer0 interrupt for compare event
@@ -55,19 +64,23 @@ uint8_t InitSerial(uint32_t baudrate){                                          
   return result;                                                                        //true on success, failure resets to default
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint8_t mbSetup(uint32_t baudrate, uint8_t slaveId){                                    //modbus setup, using baud and slave id
+uint8_t mbSetup(uint32_t baudrate, uint8_t slaveId)                                     //modbus setup, using baud and slave id
+{
   uint8_t result=0;                                                                     //on default return 0
   mb_ds.address.val=0;                                                                  //init address value to 0
   mb_ds.value.val=0;                                                                    //init value value to 0
   if(slaveId==0 || slaveId>247)                                                         //if slave id is invalid
+  {
     slaveId=DEFAULT_SLAVE_ID;                                                           //set to default slave id
+  }
   mb_ds.slaveId=slaveId;                                                                //set slave id
   result=InitSerial(baudrate);                                                          //and set the baudrate to the given value
   TIMSK0|=_BV(OCIE0A);                                                                  //couple timer 0 compare interrupt
   return result;                                                                        //return success of serial setup
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void SendBuffer(uint8_t* buf,uint16_t len){                                             //sending of the actual buffer
+void SendBuffer(uint8_t* buf,uint16_t len)                                              //sending of the actual buffer
+{
   union16_t crc;                                                                        //16 bit crc
   crc.val  = GetCrc16(buf,len-2);                                                       //get the crc of whatever we send
   buf[len-2]=crc.buf[0];                                                                //set lsb
@@ -75,7 +88,8 @@ void SendBuffer(uint8_t* buf,uint16_t len){                                     
   Serial.write(buf,len);                                                                //push it out
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void HandleException(uint8_t exceptionCode=0x01){                                       //set and send the buffer
+void HandleException(uint8_t exceptionCode=0x01)                                        //set and send the buffer
+{
   mb_ds.msgFunc|=0x80;                                                                  //set the function to exception function
   mb_ds.msg[2]=exceptionCode;                                                           //set the given code into response
   SendBuffer(mb_ds.msg,0x05);                                                           //and send
@@ -255,7 +269,7 @@ uint8_t HandleRequest()                                                         
         result=HandleMisc();                                                            //and that also may be handled
       }
     }                                                                                   //ignore if crc fails
-    if(result!=EXCEPTION_NONE)                                                          //if there is a exception
+    if(result!=EXCEPTION_NONE)                                                          //if there is an exception
     {
       HandleException(result);                                                          //send it back
     }
@@ -271,10 +285,10 @@ void mbTimerEvent()                                                             
   }
 }                                                                                       //ignore timer otherwise
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void mbSerialEvent()                                                                    //
+void mbSerialEvent()                                                                    //rx callback automagically
 {                                                                                       //
-  bool ignore=(mb_ds.silence_cnt>mb_ds.silence_ticks)&&(mb_ds.msgPtr>0);                //
-  if(ignore)                                                                            //
+  bool ignore=(mb_ds.silence_cnt>mb_ds.silence_ticks)&&(mb_ds.msgPtr>0);                //if we arent in a silence period and there is data
+  if(ignore)                                                                            //clear the buffer by resetting message pointer and expectedLength
   {                                                                                     //on ignore reset the buffer
     mb_ds.msgPtr=0;                                                                     //reset buffer
     mb_ds.expectedLength=0;                                                             //default expected length value
@@ -284,11 +298,11 @@ void mbSerialEvent()                                                            
   {                                                                                     //if there is data
     if(ignore)                                                                          //if there are leftovers and silence period has expired
     {
-      Serial.read();                                                                    //ignore
+      Serial.read();                                                                    //read data without doing anything with it
     }
-    else                                                                                //
+    else                                                                                //if we aren't ignoring data
     {
-      if((mb_ds.msgPtr<MESSAGE_LENGTH))                                                 //
+      if((mb_ds.msgPtr<MESSAGE_LENGTH))                                                 //and if we havent gotten a full msg buffer
       {                                                                                 //can't store more than buffer size
         mb_ds.msg[mb_ds.msgPtr]=Serial.read();                                          //put data into buffer
         mb_ds.msgPtr++;                                                                 //increment counter
@@ -296,7 +310,7 @@ void mbSerialEvent()                                                            
         {
           mb_ds.expectedLength=GetExpectedLength();                                     //set expected length
         }
-        if(mb_ds.msgPtr==mb_ds.expectedLength)                                          //
+        if(mb_ds.msgPtr==mb_ds.expectedLength)                                          //check if expected length has been reached
         {                                                                               //is there a complete request
           HandleRequest();                                                              //handle it
           ignore=true;                                                                  //ignore leftovers
@@ -308,7 +322,7 @@ void mbSerialEvent()                                                            
   if(ignore)                                                                            //
   {                                                                                     //on ignore reset the buffer
     mb_ds.msgPtr=0;                                                                     //reset buffer
-    mb_ds.expectedLength=0;                                                             //default expected length value
+    mb_ds.expectedLength=0;                                                             //default expected length value, none
   }                                                                                     //
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
