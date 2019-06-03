@@ -29,15 +29,23 @@ uint8_t clSetup()
   if(cl_ds.configLoaded)
   {
     if((!cl_ds.startRunning)&&cl_ds.defaultOffline)
+    {
       mbSetup(DEFAULT_BAUDRATE, DEFAULT_SLAVE_ID);
+    }
     else
+    {
       mbSetup(mb_ds.baudrate, mb_ds.slaveId);
+    }
     if(cl_ds.startRunning)
+    {
       clStart();
+    }
   }
   else
+  {
     mbSetup(DEFAULT_BAUDRATE, DEFAULT_SLAVE_ID);
-
+  }
+  
   if(!cl_ds.isRunning)
   {
     prInitOfflineGpioDef();
@@ -78,7 +86,9 @@ uint8_t clStart()
       prInitOnlineGpioDef();
       result=prOnlineGpio();
       if(result!=EXCEPTION_NONE)
+      {
          clStop();
+      }
     }
   }
   return result;
@@ -205,9 +215,12 @@ uint8_t WriteFuncCoil(uint16_t address,uint16_t* value)
     {
       case 0x0000:
         result=clStart();
-        if ((result==EXCEPTION_NONE)&&cl_ds.defaultOffline)
-          if (ConfigFromEeprom(0, MB_SETTING_SIZE, mb_ds.settings))
-            mbSetup(mb_ds.baudrate, mb_ds.slaveId);
+        if (result==EXCEPTION_NONE &&
+           cl_ds.defaultOffline &&
+           ConfigFromEeprom(0, MB_SETTING_SIZE, mb_ds.settings))
+        {
+          mbSetup(mb_ds.baudrate, mb_ds.slaveId);
+        }
         break;
       case 0x0001:
         result=clPause();
@@ -218,7 +231,9 @@ uint8_t WriteFuncCoil(uint16_t address,uint16_t* value)
     }
   }
   else
+  {
     result=EXCEPTION_INVALID_VALUE;
+  }
   return result;
 }
 //--------------------------------------------------------------------------------------
@@ -228,9 +243,12 @@ uint8_t HandleModbusRead(uint16_t address, uint16_t* value)
   for(uint16_t i=0;i<MB_CNT;i++)
   {
     PROGRAM_READTYPE (&mbMapping [i], target);
-    if(target.isRead && target.regStart<=address)
-      if(address<(target.regStart+target.regCnt))
+    if(target.isRead && 
+       target.regStart<=address && 
+       address<(target.regStart+target.regCnt))
+    {
         return (*(target.funcPtr))(address-target.regStart,value);
+    }
   }
   return EXCEPTION_INVALID_ADDRESS;
 }
@@ -241,9 +259,12 @@ uint8_t HandleModbusWrite(uint16_t address, uint16_t* value)
   for(uint16_t i=0;i<MB_CNT;i++)
   {
     PROGRAM_READTYPE (&mbMapping [i], target);
-    if(!target.isRead && target.regStart<=address)
-      if(address<(target.regStart+target.regCnt))
-        return (*(target.funcPtr))(address-target.regStart,value);
+    if(!target.isRead && 
+       target.regStart<=address &&
+       address<(target.regStart+target.regCnt))
+    {
+      return (*(target.funcPtr))(address-target.regStart,value);
+    }
   }
   return EXCEPTION_INVALID_ADDRESS;
 }

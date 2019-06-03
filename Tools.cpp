@@ -24,7 +24,9 @@ uint16_t GetCrc16(uint8_t* buf, uint16_t len)
         crc ^= 0xA001;
       }
       else
+      {
         crc >>= 1;
+      }
     }
   }
   return crc;
@@ -71,11 +73,17 @@ uint8_t CheckResetRegister()
   uint8_t result=(GET_REGISTER(0x54)&0x0F);                                             //get the reset register, only first 4 bits are interesting
   SET_REGISTER(0x54,0x00);                                                              //and clear it
   if(result&0x02)                                                                       //check external reset flag
+  {
     result=2;
+  }
   else if(result&0x04)                                                                  //check brown out reset flag
+  {
     result=3;
+  }
   else if(result&0x08)                                                                  //check watchdog reset flag
+  {
     result=4;
+  }
   return result;                                                                        //and if only bit 1 is set, bit 1 stays set
 }
 //--------------------------------------------------------------------------------------

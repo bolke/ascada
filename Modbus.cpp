@@ -90,7 +90,7 @@ uint8_t ReadRegisters()                                                         
 {                                                                                       //
   if((mb_ds.value.val>0)&&(mb_ds.value.val<=READ_WORD_MAX))                             //check if the value is in range
   {                                                                                     //
-    if(((mb_ds.address.val+mb_ds.value.val)<REQ_REGION_END)){                           //check if the addresses are within range
+    if(((mb_ds.address.val+mb_ds.value.val)<REQ_REGION_END))                            //check if the addresses are within range
     {                                                                                   //
       if(mb_ds.ReadRegister!=NULL)                                                      //check if there is a register read function
       {                                                                                 //
@@ -108,7 +108,9 @@ uint8_t ReadRegisters()                                                         
             cnt++;                                                                      //address increment
           }                                                                             //
           else                                                                          //
+          {
             return result;                                                              //whatever error was returned, return it upwards
+          }  
         }                                                                               //
         SendBuffer(mb_ds.msg,5+mb_ds.msg[2]);                                           //send the response
         return EXCEPTION_NONE;                                                          //no exception
@@ -121,34 +123,41 @@ uint8_t ReadRegisters()                                                         
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t ReadBits()                                                                      //
 {                                                                                       //
-  if(mb_ds.value.val>0&&mb_ds.value.val<=READ_BIT_MAX)                                  //check if the value is in range
-      {                                                                                 //
+  if(mb_ds.value.val>0 && 
+     mb_ds.value.val<=READ_BIT_MAX)                                                     //check if the value is in range  
+  {                                                                                     //
     if(((mb_ds.address.val+mb_ds.value.val)<=REQ_REGION_END))                           //check if the addresses are within range
-        {                                                                               //
-     if(mb_ds.ReadBit!=NULL)                                                            //check if function has been set
-     {                                                                                  //
+    {                                                                                   //
+      if(mb_ds.ReadBit!=NULL)                                                           //check if function has been set
+      {                                                                                 //
         uint8_t result=EXCEPTION_NONE;                                                  //keeping track of result
         uint16_t data=0;                                                                //temp var for data read
         uint8_t n=0;                                                                    //byte counter
         mb_ds.msg[2]=mb_ds.value.val>>3;                                                //number of bytes used in response
         if(mb_ds.msg[2]==0)                                                             //if it's still zero
+        {                                                                               //
           mb_ds.msg[2]=1;                                                               //set to 1, always one byte used
+        }                                                                               //
         mb_ds.msg[3] = 0;                                                               //set first byte to 0
         for(uint16_t i=0;i<mb_ds.value.val;i++)                                         //loop through all bits
-            {                                                                           //
-        if((i>0) && ((i%8)==0))                                                         //check if it's a new byte
         {                                                                               //
-        n++;                                                                            //increment byte counter
+          if((i>0) && ((i%8)==0))                                                       //check if it's a new byte
+          {                                                                             //
+            n++;                                                                        //increment byte counter
             mb_ds.msg[3+n] = 0;                                                         //reset the byte to 0
           }                                                                             //
           result=(*(mb_ds.ReadBit))(mb_ds.address.val+i,&data);                         //request a bit value
           if(result==EXCEPTION_NONE)                                                    //on success
           {                                                                             //
             if(data!=0)                                                                 //and if it's set
+            {                                                                           //
               mb_ds.msg[3+n] |= 1<<(i%8);                                               //put it into the byte if set
+            }                                                                           //
           }                                                                             //
           else                                                                          //
+          {                                                                             //
             return result;                                                              //return error code
+          }                                                                             //
         }                                                                               //
         SendBuffer(mb_ds.msg,5+mb_ds.msg[2]);                                           //send the response
         return EXCEPTION_NONE;                                                          //no exception
@@ -160,16 +169,18 @@ uint8_t ReadBits()                                                              
   return EXCEPTION_INVALID_VALUE;                                                       //return invalid value exception
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint8_t HandleMisc()                                                                   //handling any non default functions
-    {                                                                                  //
-  switch(mb_ds.msgFunc)                                                                //handle the received request
-  {                                                                                    //
-    default:                                                                           //by default use the following function pointer
-      if(mb_ds.ExecuteFunction!=NULL)                                                  //this function pointer
-        return (*(mb_ds.ExecuteFunction))(mb_ds.msgFunc,NULL);                         //and call it, returning the result of the function
-      return EXCEPTION_INVALID_FUNCTION;                                               //otherwise return not available
-  }                                                                                    //
-}                                                                                      //
+uint8_t HandleMisc()                                                                    //handling any non default functions
+{                                                                                       //
+  switch(mb_ds.msgFunc)                                                                 //handle the received request
+  {                                                                                     //
+    default:                                                                            //by default use the following function pointer
+      if(mb_ds.ExecuteFunction!=NULL)                                                   //this function pointer
+      {                                                                                 //
+        return (*(mb_ds.ExecuteFunction))(mb_ds.msgFunc,NULL);                          //and call it, returning the result of the function
+      }                                                                                 //
+      return EXCEPTION_INVALID_FUNCTION;                                                //otherwise return not available
+  }                                                                                     //
+}                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t HandleRequest()                                                                 //handling a complete request
 {                                                                                       //
@@ -177,19 +188,25 @@ uint8_t HandleRequest()                                                         
   if(mb_ds.msgSlave==0)                                                                 //message for everyone? (including me)
   {                                                                                     //
     if(CheckCrc(mb_ds.msg,mb_ds.msgPtr))                                                //check crc
+    {                                                                                   //
       result=HandleBroadcast();                                                         //handle it
+    }                                                                                   //
   }                                                                                     //
   else if((mb_ds.msgSlave==mb_ds.slaveId))                                              //message for me
   {                                                                                     //
-    if(CheckCrc(mb_ds.msg,mb_ds.msgPtr)){                                               //check crc
-      if(mb_ds.msgFunc<7){                                                              //default function
+    if(CheckCrc(mb_ds.msg,mb_ds.msgPtr))                                                //check crc
+    {                                                                                   //
+      if(mb_ds.msgFunc<7)                                                               //default function
+      {                                                                                 //
         mb_ds.address.buf[0]=mb_ds.msg[3];                                              //address msb
         mb_ds.address.buf[1]=mb_ds.msg[2];                                              //address lsb
         mb_ds.value.buf[0]=mb_ds.msg[5];                                                //value msb
         mb_ds.value.buf[1]=mb_ds.msg[4];                                                //value lsb
-        if(mb_ds.address.val <= REGION_RANGE){                                          //address within range
+        if(mb_ds.address.val <= REGION_RANGE)                                           //address within range
+        {
           mb_ds.address.val+=REQ_REGION_START;                                          //set address in correct range
-          switch(mb_ds.msgFunc){                                                        //handle default functions
+          switch(mb_ds.msgFunc)                                                         //handle default functions
+          {  
             case 1:                                                                     //read coil status (bit)
             case 2:                                                                     //read input status (bit)
               result=ReadBits();                                                        //read the requested bits
@@ -199,33 +216,49 @@ uint8_t HandleRequest()                                                         
               result=ReadRegisters();                                                   //read the requested registers
               break;                                                                    //and done
             case 5:                                                                     //write coil (bit)
-              if(mb_ds.WriteBit!=NULL){                                                 //is function set, then write
+              if(mb_ds.WriteBit!=NULL)                                                  //is function set, then write
+              {
                 result=(*(mb_ds.WriteBit))(mb_ds.address.val,&(mb_ds.value.val));       //
                 if(result==EXCEPTION_NONE)                                              //on success
+                {
                   SendBuffer(mb_ds.msg,mb_ds.msgPtr);                                   //send the buffer
-              }else                                                                     //otherwise, return failure
+                }
+              }
+              else                                                                      //otherwise, return failure
+              {
                 result=EXCEPTION_SLAVE_DEVICE_FAILURE;                                  //can't execute, slave error
+              }
               break;                                                                    //and done
             case 6:                                                                     //write holding register (word)
               if(mb_ds.WriteRegister!=NULL)                                             //
               {                                                                         //check me writing bits function
                 result=(*(mb_ds.WriteRegister))(mb_ds.address.val,&(mb_ds.value.val));  //
                 if(result==EXCEPTION_NONE)                                              //on success
+                {
                   SendBuffer(mb_ds.msg,mb_ds.msgPtr);                                   //return the request
+                }
               }                                                                         //
               else                                                                      //otherwise the writing bit function hasn't been set
+              {
                 result=EXCEPTION_SLAVE_DEVICE_FAILURE;                                  //can't execute, slave error
+              }
               break;                                                                    //and done
           }                                                                             //
         }                                                                               //
         else                                                                            //address exception
+        {
           result=EXCEPTION_INVALID_ADDRESS;                                             //address exception code
+        }
       }                                                                                 //
       else                                                                              //otherwise a non default function
+      {
         result=HandleMisc();                                                            //and that also may be handled
+      }
     }                                                                                   //ignore if crc fails
     if(result!=EXCEPTION_NONE)                                                          //if there is a exception
+    {
       HandleException(result);                                                          //send it back
+    }
   }                                                                                     //otherwise no for us
   return result;                                                                        //return result, 0 == success
 }                                                                                       //
@@ -233,7 +266,9 @@ uint8_t HandleRequest()                                                         
 void mbTimerEvent()                                                                     //
 {                                                                                       //interrupts for timer 0 compare trigger
   if(mb_ds.silence_cnt<=mb_ds.silence_ticks)                                            //check if we have reached the limit
+  {
     mb_ds.silence_cnt++;                                                                //increment counter if not
+  }
 }                                                                                       //ignore timer otherwise
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void mbSerialEvent()                                                                    //
@@ -248,14 +283,19 @@ void mbSerialEvent()                                                            
   while(Serial.available())                                                             //
   {                                                                                     //if there is data
     if(ignore)                                                                          //if there are leftovers and silence period has expired
+    {
       Serial.read();                                                                    //ignore
-    else{                                                                               //
+    }
+    else                                                                                //
+    {
       if((mb_ds.msgPtr<MESSAGE_LENGTH))                                                 //
       {                                                                                 //can't store more than buffer size
         mb_ds.msg[mb_ds.msgPtr]=Serial.read();                                          //put data into buffer
         mb_ds.msgPtr++;                                                                 //increment counter
         if(mb_ds.expectedLength==0)                                                     //keep reading if expected length is unknown
+        {
           mb_ds.expectedLength=GetExpectedLength();                                     //set expected length
+        }
         if(mb_ds.msgPtr==mb_ds.expectedLength)                                          //
         {                                                                               //is there a complete request
           HandleRequest();                                                              //handle it

@@ -66,7 +66,7 @@
                         
   extern mb_t mb_ds;                                                                    //modbus data structure
   uint8_t mbSetup(uint32_t baudrate=DEFAULT_BAUDRATE, 
-          uint8_t slaveId=DEFAULT_SLAVE_ID);
+  uint8_t slaveId=DEFAULT_SLAVE_ID);
   void mbSerialEvent();
   void mbTimerEvent();
 
