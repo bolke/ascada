@@ -70,21 +70,18 @@ bool CheckEepromForMagic()                                                      
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t CheckResetRegister()                                                            //read and clear the reset register
 {                                                                                       //
-  uint8_t result=(GET_REGISTER(0x54)&0x0F);                                             //get the reset register, only first 4 bits are interesting
+  uint8_t value=(GET_REGISTER(0x54)&0x0F);                                              //get the reset register, only first 4 bits are interesting
   SET_REGISTER(0x54,0x00);                                                              //and clear it
-  if(result&0x02)                                                                       //check external reset flag
+  switch(value)                                                                         //
   {                                                                                     //
-    result=2;                                                                           //
+    case 0x02:                                                                          //external reset flag
+      return 2;                                                                         //
+    case 0x04:                                                                          //brownout flag
+      return 3;                                                                         //
+    case 0x08:                                                                          //watchdog flag
+      return 4;                                                                         //
   }                                                                                     //
-  else if(result&0x04)                                                                  //check brown out reset flag
-  {                                                                                     //
-    result=3;                                                                           //
-  }                                                                                     //
-  else if(result&0x08)                                                                  //check watchdog reset flag
-  {                                                                                     //
-    result=4;                                                                           //
-  }                                                                                     //
-  return result;                                                                        //and if only bit 1 is set, bit 1 stays set
+  return 0;                                                                             //no reset
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint16_t GetConfigStart()                                                               //get the address for the config
@@ -95,13 +92,13 @@ uint16_t GetConfigStart()                                                       
   return configStart.val;                                                               //result
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-bool ConfigFromEeprom(uint16_t start,uint16_t cnt, uint8_t* buf)                        //
+bool ConfigFromEeprom(uint16_t start,uint16_t cnt, uint8_t* buf)                        //start address, byte count to read, buffer to fill
 {                                                                                       //
-  return ReadEeprom(GetConfigStart() + start,cnt,buf);                                  //
+  return ReadEeprom(GetConfigStart() + start,cnt,buf);                                  //read config from eeprom
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-bool ConfigToEeprom(uint16_t start,uint16_t cnt, uint8_t* buf)                          //
+bool ConfigToEeprom(uint16_t start,uint16_t cnt, uint8_t* buf)                          //start address, byte count to write, buffer to use
 {                                                                                       //
-  return WriteEeprom(GetConfigStart() + start,cnt,buf);                                 //
+  return WriteEeprom(GetConfigStart() + start,cnt,buf);                                 //write config to eeprom
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
