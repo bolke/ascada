@@ -10,5 +10,6 @@
     #define EXCEPTION_SLAVE_DEVICE_BUSY 0x06                                            //can't execute request at the moment
     #define EXCEPTION_NEGATIVE_ACKNOWLEDGE 0x07                                         //can't acknowledge request
     #define EXCEPTION_NOT_RUNNING 0x08                                                  //can't do stuff, because not in run
+    #define EXCEPTION_FAILED_TO_EXECUTE 0x09                                            //couldn't execute
                                                                                         //
 #endif                                                                                  //
