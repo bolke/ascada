@@ -2,22 +2,21 @@
   #define PROJECT_H                                                                     //
                                                                                         //
   #include "Tools.h"                                                                    //
-  #include "ProjectDefines.h"                                                           //
-                                                                                        //
-  typedef union                                                                         //
-  {                                                                                     //
-    struct                                                                              //
-    {                                                                                   //
-      uint8_t address;                                                                  //what io pin
-      uint8_t inOut:1;                                                                  //input(0) or output(1)
-      uint8_t lowHigh:1;                                                                //has pull up enabled when (1), if input, has output default high(1) or low(0)
-      uint8_t analog:1;                                                                 //analog reading(1) if input, enables pwm(1), if output
-      uint8_t special:1;                                                                //special function enabled(1), spi, i2c, timer, interrupt input, etc    
-    };                                                                                  //
-    uint16_t definition;                                                                //
-  }                                                                                     //
-  gpioDef_t;                                                                            //
+  #include "ProjectGpio.h"
   
+  #define VDATE                         "Jun 15 2019"                                   //build date, used as version, format "MMM DD YYYY"
+  #define VTIME                         "21:39:12"                                      //build time, used as version, format "hh:mm:ss"
+                                                                                        //
+  #define PROJECT_ID                    "00"                                            //unique project identifier, format base64 "xx"
+  #define MAGIC_NUMBER                  0xC369                                          //eeprom value used to check if eeprom is set
+  #define MAGIC_ADDRESS                 0x00                                            //eeprom address to read the magic number from
+                                                                                        //
+  #define ALARM_WORD_CNT                0x10                                            //number of reserved alarm words 
+  #define ALARM_BIT_CNT                 (ALARM_WORD_CNT*0x10)                           //total number of alarms
+                                                                                        //
+  #define GPIO_CNT                      0x15                                            //total number of gpio devices, connected to device
+  #define GPIO_DEFAULT                  GPIO_INPUT_HIGH                                 //default value of unused gpio
+                                                                                        //
   typedef struct                                                                        //
   {                                                                                     //
     gpioDef_t gpio[GPIO_CNT];                                                           //project gpio definition
@@ -27,12 +26,7 @@
                                                                                         //
   extern pr_t pr_ds;                                                                    //project data structure
                                                                                         //
-  uint8_t prOfflineGpio();                                                              //
-  uint8_t prOnlineGpio();                                                               //
-  uint8_t prDefaultGpio();                                                              //
-  uint8_t prInitOnlineGpioDef();                                                        //run this when starting to initialize the gpio
-  uint8_t prInitOfflineGpioDef();                                                       //run this when offline to initialize the gpio
-                                                                                        //
-  uint8_t prInitGpioDef(gpioDef_t* gpioDef, uint8_t setting);                           //
-  uint8_t prEnableGpio(gpioDef_t* gpioDef);                                             //
+  uint8_t prSetup();
+  uint8_t prLoop();
+  
 #endif                                                                                  //
