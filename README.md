@@ -40,12 +40,3 @@ r/w  func|coil/register|data address|type|r/w|original name
 ```
 
 See http://www.simplymodbus.ca/ for an explanation of modbus (rtu/tcp/etc). 
-
-# Scada
-Will be used for controlling different hardware setups.
-
-# Todo
-[ ] Documentation.
-[ ] Control loop implementation.
-[ ] Loading of saved settings.
-[ ] Testing multiple arduino's on a rs485 bus.
