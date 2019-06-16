@@ -41,6 +41,5 @@
   uint8_t clStart();                                                                    //
   uint8_t clStop();                                                                     //
   uint8_t clPause();                                                                    //
-  bool clDetectAlarms();                                                                //
                                                                                         //
 #endif                                                                                  //
