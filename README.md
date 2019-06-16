@@ -30,13 +30,25 @@ Because of history naming of addresses are a bit weird, but that's history.
 
 ```
 -----------------------------------------------------------------
-r/w  func|coil/register|data address|type|r/w|original name
+r/w  func|coil/register|data address |type|r/w|original name
 -----------------------------------------------------------------
-1/5      |1-9999       |0000-270E   |bit |r/w|Discrete output coils.
-2        |10001-19999  |0000-270E   |bit |r  |Discrete input contacts.
-4        |30001-39999  |0000-270E   |byte|r  |Analog input registers.
-3/6      |40001-49999  |0000-270E   |byte|r/w|Analog output holding registers.
+1/5      |1-9999       |0x0000-0x270E|bit |r/w|Discrete output coils.
+2        |10001-19999  |0x0000-0x270E|bit |r  |Discrete input contacts.
+4        |30001-39999  |0x0000-0x270E|byte|r  |Analog input registers.
+3/6      |40001-49999  |0x0000-0x270E|byte|r/w|Analog output holding registers.
 ------------------------------------------------------------------
 ```
 
+Device registers are mapped into holding registers. The atmega328p addresses described in the atmega328p datasheet are read and writeable at 0x0000 to 0x00C7, all 199 registers. 
+
+EEPROM registers are mapped onto holding registers 0x00C7 to 0x02C7, 512 registers of 16 bit (1024 8 bit EEPROM registers). Read and writeable through modbus.
+
+-----------------------------------------------------------------
+r/w func|data address|length|description
+-----------------------------------------------------------------
+1/5     |
+2       |
+4       |
+3/6     |
+-----------------------------------------------------------------
 See http://www.simplymodbus.ca/ for an explanation of modbus (rtu/tcp/etc). 
