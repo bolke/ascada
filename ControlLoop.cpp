@@ -52,28 +52,27 @@ uint8_t clSetup()                                                               
   if(!cl_ds.isRunning)                                                                  //if we arent running
   {                                                                                     //
     prInitOfflineGpioDef();                                                             //initialize the offline gpio settings
-    prOfflineGpio();                                                                    //and set to starting settings
   }                                                                                     //
                                                                                         //
   return EXCEPTION_NONE;                                                                //no exceptions
-}                                                                                       //
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-bool clDetectAlarms()                                                                   //check if there are any alarms
-{                                                                                       //
-  for(uint16_t i=0;i<ALARM_WORD_CNT;i++)                                                //loop through all the alarms
-  {                                                                                     //
-    if(pr_ds.alarms[i]!=0)                                                              //and check if an alarm has been set
-    {                                                                                   //
-      return true;                                                                      //if an alarm has been found, return true
-    }                                                                                   //
-  }                                                                                     //
-  return false;                                                                         //no alarms
-}                                                                                       //
+}                                                                                       //                                                                                     //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t clLoop()                                                                        //
 {                                                                                       //
-  cl_ds.hasAlarms=clDetectAlarms();                                                     //set the hasAlarms flag
-  return 0;                                                                             //
+  if(cl_ds.isRunning)
+  {
+    for(uint16_t i=0;i<ALARM_WORD_CNT;i++)                                              //loop through all the alarms
+    {                                                                                   //
+      if(pr_ds.alarms[i]!=0)                                                            //and check if an alarm has been set
+      {                                                                                 //
+        cl_ds.hasAlarms=true;                                                           //if an alarm has been found, return true
+        break;
+      }                                                                                 //
+    }                                                                                   //
+    prLoop();
+    return EXCEPTION_NONE;                                                              //
+  }
+  return EXCEPTION_NOT_RUNNING;
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t clStart()                                                                       //
@@ -86,9 +85,13 @@ uint8_t clStart()                                                               
       cl_ds.halted=HALTED_NONE;                                                         //we aren't halted anymore
       cl_ds.isRunning=true;                                                             //and we are running now
       prInitOnlineGpioDef();                                                            //initialize the gpio when online
-      result=prOnlineGpio();                                                            //and then set the gpio at their starting values
-      if(result!=EXCEPTION_NONE)                                                        //if we arent successfull
-      {                                                                                 //
+      result=prSetup();
+      if(result==EXCEPTION_NONE)                                                        //if we arent successfull
+      {         
+        result=prSetup();
+      }
+      if(result!=EXCEPTION_NONE)
+      {
          clStop();                                                                      //stop 
       }                                                                                 //
     }                                                                                   //
@@ -107,7 +110,6 @@ uint8_t clStop()                                                                
     cl_ds.halted=HALTED_STOPPED;                                                        //and we have stopped
     result=EXCEPTION_NONE;                                                              //success
     prInitOfflineGpioDef();                                                             //initialize the gpio for offline running
-    prOfflineGpio();                                                                    //and set the values to the correct value
   }                                                                                     //
                                                                                         //
   return result;                                                                        //return the result
@@ -211,7 +213,14 @@ uint8_t ReadSettingsReg(uint16_t address,uint16_t* value)                       
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t ReadUptimeReg(uint16_t address,uint16_t* value)                                 //return uptime in milliseconds
 {                                                                                       //
-  *value=(millis()>>(address*16))&0xFFFF;                                               //uptime read from arduino library millis
+  if(address==0)
+  {
+    *value=(millis()>>16);
+  }
+  else
+  {
+    *value=(millis()&0xFFFF);
+  }  
   return EXCEPTION_NONE;                                                                //success
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
