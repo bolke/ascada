@@ -2,9 +2,6 @@
 #define CONTROLLOOP_H                                                                   //
                                                                                         //
   #include <stdint.h>                                                                   //
-  #include "Tools.h"                                                                    //
-  #include "Project.h"                                                                  //
-  #include "ModbusMapping.h"                                                            //
                                                                                         //
   #define HALTED_NONE 0                                                                 //
   #define HALTED_HALTED 1                                                               //

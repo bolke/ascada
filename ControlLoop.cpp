@@ -1,12 +1,15 @@
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #include "ControlLoop.h"                                                                //
 #include "Modbus.h"                                                                     //
+#include "Tools.h"                                                                      //
+#include "Project.h"                                                                    //
+#include "ModbusMapping.h"                                                              //           
 #include "Project.h"                                                                    //
 #include "Exceptions.h"                                                                 //
 #include "Arduino.h"                                                                    //
 #include <EEPROM.h>                                                                     //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-cl_t cl_ds;                                                                             //
+cl_t cl_ds;                                                                             //control loop data structure
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t clSetup()                                                                       //
 {                                                                                       //
@@ -143,7 +146,13 @@ uint8_t WriteEepromReg(uint16_t address,uint16_t* value)                        
 {                                                                                       //
   EEPROM.write(address,*value);                                                         //writes a byte value to eeprom, even though a int16 is given (first byte is used)
   return EXCEPTION_NONE;                                                                //success
-}                                                                                       //
+}            
+//--------------------------------------------------------------------------------------
+uint8_t ReadAlarmReg(uint16_t address,uint16_t* value)
+{
+  *value=pr_ds.alarms[address];
+  return EXCEPTION_NONE;
+}
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t ReadVersionReg(uint16_t address,uint16_t* value)                                //read version information from memory
 {                                                                                       //
