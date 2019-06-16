@@ -43,12 +43,4 @@ Device registers are mapped into holding registers. The atmega328p addresses des
 
 EEPROM registers are mapped onto holding registers 0x00C7 to 0x02C7, 512 registers of 16 bit (1024 8 bit EEPROM registers). Read and writeable through modbus.
 
------------------------------------------------------------------
-r/w func|data address|length|description
------------------------------------------------------------------
-1/5     |
-2       |
-4       |
-3/6     |
------------------------------------------------------------------
 See http://www.simplymodbus.ca/ for an explanation of modbus (rtu/tcp/etc). 
