@@ -28,5 +28,5 @@
                                                                                         //
   uint8_t prSetup();
   uint8_t prLoop();
-  
+
 #endif                                                                                  //

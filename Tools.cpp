@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#include "Tools.h"                                                                      //
-#include "Project.h"                                                                    //project inclusions
-#include <EEPROM.h>                                                                     //
+#include "Tools.h"                                                                      
+#include "Project.h"                                                             
+#include <EEPROM.h>                                                                     
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 bool CheckCrc(uint8_t* buf, uint16_t len)                                               //calc crc16 from given bytearray, exception last 2, and compare with last 2
 {                                                                                       //

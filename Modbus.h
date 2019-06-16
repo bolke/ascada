@@ -64,8 +64,13 @@
   mb_t;                                                                                 //type definition of modbus data structure
                                                                                         //
   extern mb_t mb_ds;                                                                    //modbus data structure definition / coupling with variable in cpp file
+
   uint8_t mbSetup(uint32_t baudrate=DEFAULT_BAUDRATE, uint8_t slaveId=DEFAULT_SLAVE_ID);//modbus setup function, with defaults for baud and slave_id
   void mbSerialEvent();                                                                 //called on serial event, rx, by automagic callback
   void mbTimerEvent();                                                                  //called on timer event, used to keep track of silence, automagic callback
-                                                                                        //
-#endif                                                                                  //
+  uint8_t mbHandleModbusRead(uint16_t address,uint16_t* value);                         //handle a read action, with an internal address and put the result in the pointer argument given
+  uint8_t mbHandleModbusWrite(uint16_t address,uint16_t* value);                        //handle a write action, with an  internal address and write the given pointer argument    
+  uint8_t mbHandleModbusRead(uint16_t address,uint16_t* value);                         //handle a read action, with an internal address and put the result in the pointer argument given
+  uint8_t mbHandleModbusWrite(uint16_t address,uint16_t* value);                        //handle a write action, with an  internal address and write the given pointer argument
+ 
+#endif                                                                                  
