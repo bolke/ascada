@@ -14,10 +14,10 @@ cl_t cl_ds;                                                                     
 uint8_t clSetup()                                                                       //
 {                                                                                       //
   if(CheckEepromForMagic())                                                             //check if a magic number of on a certain address
-  {                                                                                     //
+  {                                                                                     //           
     if(ConfigFromEeprom(0, MB_SETTING_SIZE, mb_ds.settings))                            //load modbus settings from eeprom, into mb_ds.settings
     {                                                                                   //
-      ConfigFromEeprom(MB_SETTING_SIZE, sizeof(mb_ds.settings), cl_ds.settings);        //read control loop settings from eeprom
+      ConfigFromEeprom(MB_SETTING_SIZE, CL_SETTING_SIZE, cl_ds.settings);               //read control loop settings from eeprom
       cl_ds.configLoaded=true;                                                          //set the configloaded flag
     }                                                                                   //
   }                                                                                     //
@@ -39,7 +39,7 @@ uint8_t clSetup()                                                               
     {                                                                                   //
       mbSetup(mb_ds.baudrate, mb_ds.slaveId);                                           //load baudrate and slave id, out of the loaded configuration
     }                                                                                   //
-    if(cl_ds.startRunning)                                                              //start at boot?
+    if(cl_ds.startRunning)                                                              //start at boot?    
     {                                                                                   //
       clStart();                                                                        //start 
     }                                                                                   //
@@ -138,15 +138,23 @@ uint8_t WriteDeviceReg(uint16_t address,uint16_t* value)                        
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t ReadEepromReg(uint16_t address,uint16_t* value)                                 //read a value from eeprom. eeprom is read in bytes
 {                                                                                       //
-  *value=EEPROM.read(address)&0xFF;                                                     //read a byte an dpop it in the value
+  union16_t result;
+  address=address+address;
+  result.buf[0]=EEPROM.read(address);
+  result.buf[1]=EEPROM.read(address+1);
+  *value=result.val;
   return EXCEPTION_NONE;                                                                //success
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t WriteEepromReg(uint16_t address,uint16_t* value)                                //write a given value to eeprom, only 
 {                                                                                       //
-  EEPROM.write(address,*value);                                                         //writes a byte value to eeprom, even though a int16 is given (first byte is used)
+  union16_t result;
+  result.val = *value;
+  address=address+address;
+  EEPROM.write(address,result.buf[0]);
+  EEPROM.write(address+1,result.buf[1]);
   return EXCEPTION_NONE;                                                                //success
-}            
+}
 //--------------------------------------------------------------------------------------
 uint8_t ReadAlarmReg(uint16_t address,uint16_t* value)
 {

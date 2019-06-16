@@ -20,8 +20,8 @@
   {                                                                                     //function with modbus address start and amount of addresses used
     MB_READ_RANGE(0x9C41,0x00C6,ReadDeviceReg),                                         //read from device, 0xC6 (198) registers (device registers)
     MB_WRITE_RANGE(0x9C41,0x00C6,WriteDeviceReg),                                       //write to device, 0xC6 (198) registers (device registers)
-    MB_READ_RANGE(0x9D07,0x0400,ReadEepromReg),                                         //read from eeprom, 0x0400 (1024) registers (eeprom registers)
-    MB_WRITE_RANGE(0x9D07,0x0400,WriteEepromReg),                                       //write to eeprom, 0x0400 (1024) registers (eeprom registers)
+    MB_READ_RANGE(0x9D07,0x0200,ReadEepromReg),                                         //read from eeprom, 0x0400 (1024) registers (eeprom registers)
+    MB_WRITE_RANGE(0x9D07,0x0200,WriteEepromReg),                                       //write to eeprom, 0x0400 (1024) registers (eeprom registers)
     MB_READ_RANGE(0x7531,0x0008,ReadVersionReg),                                        //read version information (8 registers) from memory
     MB_READ(0x7539,ReadStatusReg),                                                      //read status register (1 register) from memory
     MB_READ(0x753A,ReadSettingsReg),                                                    //read settings register (1 register) from memory

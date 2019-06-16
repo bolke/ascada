@@ -8,6 +8,7 @@
   #define HALTED_PAUSED 2                                                               //
   #define HALTED_STOPPED 3                                                              //
                                                                                         //
+  #define CL_SETTING_SIZE 1
   typedef struct                                                                        //
   {                                                                                     //
     union                                                                               //
@@ -24,7 +25,7 @@
     };                                                                                  //
     union                                                                               //
     {                                                                                   //
-      uint8_t settings[1]={0};                                                          //
+      uint8_t settings[CL_SETTING_SIZE]={0};                                            //
       struct                                                                            //
       {                                                                                 //
         uint8_t startRunning:1;                                                         //
