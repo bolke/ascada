@@ -28,18 +28,4 @@
   #define GPIO_LOW                      0x00                                            //
   #define GPIO_HIGH                     0x01                                            //
                                                                                         //
-  typedef union                                                                         //
-  {                                                                                     //
-    struct                                                                              //
-    {                                                                                   //
-      uint8_t address;                                                                  //what io pin
-      uint8_t inOut:1;                                                                  //input(0) or output(1)
-      uint8_t lowHigh:1;                                                                //has pull up enabled when (1), if input, has output default high(1) or low(0)
-      uint8_t analog:1;                                                                 //analog reading(1) if input, enables pwm(1), if output
-      uint8_t special:1;                                                                //special function enabled(1), spi, i2c, timer, interrupt input, etc    
-    };                                                                                  //
-    uint16_t definition;                                                                //
-  }                                                                                     //
-  gpioDef_t;                                                                            //
-                                                                                        //
 #endif                                                                                  //
