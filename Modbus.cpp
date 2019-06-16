@@ -35,7 +35,7 @@ uint8_t GetExpectedLength()                                                     
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t InitSerial(uint32_t baudrate)                                                   //initialize serial
 {                                                                                       //
-  uint8_t result=EXCEPTION_SLAVE_DEVICE_FAILURE;                                        //preset to failure
+  uint8_t result=EXCEPTION_DEVICE_FAILURE;                                              //preset to failure
   uint16_t silenceTicks=0;                                                              //number of ticks used to trigger timer0 compare interrupt
   if((baudrate<BAUDRATE_MIN)||(baudrate>BAUDRATE_MAX))                                  //check if baud is within range
   {                                                                                     //
@@ -102,7 +102,7 @@ uint8_t HandleBroadcast()                                                       
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t ReadRegisters()                                                                 //read holding and input registers
 {                                                                                       //
-  if((mb_ds.value.val>0)&&(mb_ds.value.val<=READ_WORD_MAX))                             //check if the value is in range
+  if((mb_ds.value.val>0)&&(mb_ds.value.val<=READ_WORD_MAX))                             //check if the amount of registers beeing read is in range
   {                                                                                     //
     if(((mb_ds.address.val+mb_ds.value.val)<REQ_REGION_END))                            //check if the addresses are within range
     {                                                                                   //
@@ -113,14 +113,14 @@ uint8_t ReadRegisters()                                                         
         uint8_t cnt=0;                                                                  //keeping track of address
         mb_ds.msg[2] = mb_ds.value.val*2;                                               //set number of bytes, modbus == 16 bit, device is 8, address cnt * 2
         for(uint8_t i=0;i<mb_ds.msg[2];i=i+2)                                           //walk through all the addresses
-        {                                                                               //
-          result=(*(mb_ds.ReadRegister))(mb_ds.address.val+cnt,&(data.val));            //
+        {                                                                               //read all the addresses on their own, and return the results as one
+          result=(*(mb_ds.ReadRegister))(mb_ds.address.val+cnt,&(data.val));            //call readregister, with mapped address and a buffer tofill for the result data  
           if(result==EXCEPTION_NONE)                                                    //successfully read some data
           {                                                                             //
             mb_ds.msg[3+i]=data.buf[1];                                                 //pop the lsb in
             mb_ds.msg[3+i+1]=data.buf[0];                                               //pop the msb in
             cnt++;                                                                      //address increment
-          }                                                                             //
+          }                                                                             //do the macarena
           else                                                                          //
           {                                                                             //
             return result;                                                              //whatever error was returned, return it upwards
@@ -176,7 +176,7 @@ uint8_t ReadBits()                                                              
         SendBuffer(mb_ds.msg,5+mb_ds.msg[2]);                                           //send the response
         return EXCEPTION_NONE;                                                          //no exception
       }                                                                                 //
-      return EXCEPTION_SLAVE_DEVICE_FAILURE;                                            //no bit reading function is registered
+      return EXCEPTION_DEVICE_FAILURE;                                                  //no bit reading function is registered
     }                                                                                   //
     return EXCEPTION_INVALID_ADDRESS;                                                   //return invalid address exception
   }                                                                                     //
@@ -199,18 +199,15 @@ uint8_t HandleMisc()                                                            
 uint8_t HandleRequest()                                                                 //handling a complete request
 {                                                                                       //
   uint8_t result=EXCEPTION_NONE;                                                        //default is success
-  if(mb_ds.msgSlave==0)                                                                 //message for everyone? (including me)
-  {                                                                                     //
-    if(CheckCrc(mb_ds.msg,mb_ds.msgPtr))                                                //check crc
-    {                                                                                   //
-      result=HandleBroadcast();                                                         //handle it
+  if(CheckCrc(mb_ds.msg,mb_ds.msgPtr))
+  {    
+    if(mb_ds.msgSlave==0)                                                               //message for everyone? (including me), if we are going todo broadcasting
+    {                                                                                   //                                                                                  
+      result=HandleBroadcast();                                                         //handle it, a broadcast message won't get a response
     }                                                                                   //
-  }                                                                                     //
-  else if((mb_ds.msgSlave==mb_ds.slaveId))                                              //message for me
-  {                                                                                     //
-    if(CheckCrc(mb_ds.msg,mb_ds.msgPtr))                                                //check crc
+    else if((mb_ds.msgSlave==mb_ds.slaveId))                                            //message for me
     {                                                                                   //
-      if(mb_ds.msgFunc<7)                                                               //default function
+      if(mb_ds.msgFunc<7)                                                               //default functions, 1-6, might need changing if more functions are added
       {                                                                                 //
         mb_ds.address.buf[0]=mb_ds.msg[3];                                              //address msb
         mb_ds.address.buf[1]=mb_ds.msg[2];                                              //address lsb
@@ -240,7 +237,7 @@ uint8_t HandleRequest()                                                         
               }                                                                         //
               else                                                                      //otherwise, return failure
               {                                                                         //
-                result=EXCEPTION_SLAVE_DEVICE_FAILURE;                                  //can't execute, slave error
+                result=EXCEPTION_DEVICE_FAILURE;                                        //can't execute, device error
               }                                                                         //
               break;                                                                    //and done
             case 6:                                                                     //write holding register (word)
@@ -254,7 +251,7 @@ uint8_t HandleRequest()                                                         
               }                                                                         //
               else                                                                      //otherwise the writing bit function hasn't been set
               {                                                                         //
-                result=EXCEPTION_SLAVE_DEVICE_FAILURE;                                  //can't execute, slave error
+                result=EXCEPTION_DEVICE_FAILURE;                                        //can't execute, slave error
               }                                                                         //
               break;                                                                    //and done
           }                                                                             //
@@ -268,18 +265,18 @@ uint8_t HandleRequest()                                                         
       {                                                                                 //
         result=HandleMisc();                                                            //and that also may be handled
       }                                                                                 //
-    }                                                                                   //ignore if crc fails
-    if(result!=EXCEPTION_NONE)                                                          //if there is an exception
+    }                                                                                   //ignore if crc fails, could just as well be static
+    if(result!=EXCEPTION_NONE)                                                          //if there is an exception, but a valid message
     {                                                                                   //
-      HandleException(result);                                                          //send it back
+      HandleException(result);                                                          //send it back with exception function and exception code
     }                                                                                   //
-  }                                                                                     //otherwise no for us
+  }                                                                                     //otherwise not for us, or ignore
   return result;                                                                        //return result, 0 == success
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-void mbTimerEvent()                                                                     //
+void mbTimerEvent()                                                                     //called through timer0 callback
 {                                                                                       //interrupts for timer 0 compare trigger
-  if(mb_ds.silence_cnt<=mb_ds.silence_ticks)                                            //check if we have reached the limit
+  if(mb_ds.silence_cnt<=mb_ds.silence_ticks)                                            //check if we have reached the limit, silence period is based on baudrate
   {                                                                                     //
     mb_ds.silence_cnt++;                                                                //increment counter if not
   }                                                                                     //
@@ -298,27 +295,24 @@ void mbSerialEvent()                                                            
   {                                                                                     //if there is data
     if(ignore)                                                                          //if there are leftovers and silence period has expired
     {                                                                                   //
-      Serial.read();                                                                    //read data without doing anything with it
+      Serial.read();                                                                    //read data without doing anything with it, because we are in the ignore period
     }                                                                                   //
-    else                                                                                //if we aren't ignoring data
+    else if((mb_ds.msgPtr<MESSAGE_LENGTH))                                              //and if we havent gotten a full msg buffer, and aren't ignoring data
     {                                                                                   //
-      if((mb_ds.msgPtr<MESSAGE_LENGTH))                                                 //and if we havent gotten a full msg buffer
-      {                                                                                 //can't store more than buffer size
-        mb_ds.msg[mb_ds.msgPtr]=Serial.read();                                          //put data into buffer
-        mb_ds.msgPtr++;                                                                 //increment counter
-        if(mb_ds.expectedLength==0)                                                     //keep reading if expected length is unknown
-        {                                                                               //
-          mb_ds.expectedLength=GetExpectedLength();                                     //set expected length
-        }                                                                               //
-        if(mb_ds.msgPtr==mb_ds.expectedLength)                                          //check if expected length has been reached
-        {                                                                               //is there a complete request
-          HandleRequest();                                                              //handle it
-          ignore=true;                                                                  //ignore leftovers
-        }                                                                               //
+      mb_ds.msg[mb_ds.msgPtr]=Serial.read();                                            //put data into buffer
+      mb_ds.msgPtr++;                                                                   //increment counter
+      if(mb_ds.expectedLength==0)                                                       //if the expectedlength is unknown, try to get the expected length
+      {                                                                                 //
+        mb_ds.expectedLength=GetExpectedLength();                                       //set expected length, will return 0 if unknown, based on function type
+      }                                                                                 //
+      if(mb_ds.msgPtr==mb_ds.expectedLength)                                            //check if expected length has been reached, will never be 0, because atleast one byte has been read
+      {                                                                                 //is there a complete request
+        HandleRequest();                                                                //handle it, everything (function nr, address, etc) is still 'raw', ie as read.
+        ignore=true;                                                                    //ignore leftovers, trailing stuff.
       }                                                                                 //
     }                                                                                   //
   }                                                                                     //
-  mb_ds.silence_cnt=0;                                                                  //reset counter
+  mb_ds.silence_cnt=0;                                                                  //reset counter for silence period
   if(ignore)                                                                            //
   {                                                                                     //on ignore reset the buffer
     mb_ds.msgPtr=0;                                                                     //reset buffer
@@ -326,3 +320,4 @@ void mbSerialEvent()                                                            
   }                                                                                     //
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
