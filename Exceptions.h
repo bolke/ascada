@@ -1,6 +1,6 @@
-#ifndef EXCEPTIONS_H                                                                    //exception header definition
-  #define EXCEPTIONS_H                                                                  //
-                                                                                        //
+#ifndef EXCEPTIONS_H                                                                 
+  #define EXCEPTIONS_H                                                                  
+                                                                                        
     #define EXCEPTION_NONE 0x00                                                         //no exception present
     #define EXCEPTION_INVALID_FUNCTION 0x01                                             //invalid function code in request
     #define EXCEPTION_INVALID_ADDRESS 0x02                                              //invalid address in request
@@ -11,5 +11,5 @@
     #define EXCEPTION_NEGATIVE_ACKNOWLEDGE 0x07                                         //can't acknowledge request
     #define EXCEPTION_NOT_RUNNING 0x08                                                  //can't do stuff, because not in run
     #define EXCEPTION_FAILED_TO_EXECUTE 0x09                                            //couldn't execute
-                                                                                        //
-#endif                                                                                  //
+                                                                                        
+#endif                                                                                  

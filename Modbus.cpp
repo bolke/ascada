@@ -1,8 +1,6 @@
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#include <EEPROM.h>                                                                     //used in gathering input registers
-#include "Arduino.h"                                                                    //used for serial functions
 #include "Modbus.h"                                                                     //header for the outside world
-#include "Exceptions.h"                                                                 //header containing exception codes
+#include "Registers.h"
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #define REQ_REGION_START (REGION_START[mb_ds.msgFunc-1])                                //return the region coupled with the function, see modbusmapping.h
 #define REQ_REGION_END (REQ_REGION_START+REGION_RANGE)                                  //return the end of the region coupled with the function
@@ -320,4 +318,35 @@ void mbSerialEvent()                                                            
   }                                                                                     //
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+uint8_t mbHandleModbusRead(uint16_t address, uint16_t* value)                           //read data from given modbuss address
+{                                                                                       //
+  modbusMapping_t target;                                                               //the function used to read the given address
+  for(uint16_t i=0;i<MB_CNT;i++)                                                        //check all functions in modbus address / function array
+  {                                                                                     //
+    PROGRAM_READTYPE (&mbMapping[i], target);                                           //get the function from flash into memory
+    if(target.isRead &&                                                                 //check if the given function is a reading fucntion
+       target.regStart<=address &&                                                      //and address is within the given range stored in the function
+       address<(target.regStart+target.regCnt))                                         //
+    {                                                                                   //
+        return (*(target.funcPtr))(address-target.regStart,value);                      //call the actual function, and return the result
+    }                                                                                   //
+  }                                                                                     //
+  return EXCEPTION_INVALID_ADDRESS;                                                     //given address out of range
+}                                                                                       //
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+uint8_t mbHandleModbusWrite(uint16_t address, uint16_t* value)                          //
+{                                                                                       //
+  modbusMapping_t target;                                                               //function to execute
+  for(uint16_t i=0;i<MB_CNT;i++)                                                        //loop through all the modbus read write functions
+  {                                                                                     //
+    PROGRAM_READTYPE (&mbMapping[i], target);                                           //copy from flash to memory
+    if(!target.isRead &&                                                                //if it's a read function
+       target.regStart<=address &&                                                      //and the address is within range
+       address<(target.regStart+target.regCnt))                                         //
+    {                                                                                   //
+      return (*(target.funcPtr))(address-target.regStart,value);                        //call the registered function
+    }                                                                                   //
+  }                                                                                     //
+  return EXCEPTION_INVALID_ADDRESS;                                                     //failed to write
+}                                                                                       //
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,5 +1,5 @@
-#ifndef PROJECT_GPIO_H
-  #define PROJECT_GPIO_H
+#ifndef GPIO_H
+  #define GPIO_H
 
   #include "Tools.h"
   

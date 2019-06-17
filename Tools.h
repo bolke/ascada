@@ -3,6 +3,8 @@
                                                                                         //
   #include <stdint.h>                                                                   //default definition of integers
   #include "Arduino.h"                                                                  //arduino definitions
+  #include <EEPROM.h>
+  #include "Exceptions.h"                                                               //header containing exception codes
                                                                                         //
   #define SET_REGISTER(addr,value) ((*(volatile uint8_t *)addr)=value)                  //set an actual register address with given value
   #define GET_REGISTER(addr) (*(volatile uint8_t *)addr)                                //return actual register from given address

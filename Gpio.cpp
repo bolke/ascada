@@ -1,8 +1,8 @@
-#include "ProjectGpio.h"
-#include "Project.h"                                                                    //
-#include "ModbusMapping.h"                                                              //
-#include "Exceptions.h"                                                                 //
-#include "ControlLoop.h"                                                                //
+#include "Gpio.h"
+#include "Project.h"                                                                    
+#include "Registers.h"                                                              
+#include "Exceptions.h"                                                                 
+#include "ControlLoop.h"                                                                
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t prInitOfflineGpioDef()                                                          //
 {                                                                                       //
