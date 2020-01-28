@@ -17,9 +17,9 @@ uint16_t GetCrc16(uint8_t* buf, uint16_t len)                                   
   for (uint16_t pos = 0; pos < len; pos++)                                              //loop through all the bytes
   {                                                                                     //
     crc ^= (uint16_t)buf[pos];                                                          //bitwise xor
-    for (uint16_t i = 8; i != 0; i--)                                                   //
+    for (uint16_t i = 8; i != 0; i--)                                                   //loop from 8 down to 0
     {                                                                                   //
-      if ((crc & 0x0001) != 0)                                                          //
+      if ((crc & 0x0001) != 0)                                                          //some magic to generate the crc
       {                                                                                 //
         crc >>= 1;                                                                      //
         crc ^= 0xA001;                                                                  //
@@ -33,32 +33,32 @@ uint16_t GetCrc16(uint8_t* buf, uint16_t len)                                   
   return crc;                                                                           //return crc
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-bool ReadEeprom(uint16_t start, uint16_t cnt, uint8_t* buf)                             //
+bool ReadEeprom(uint16_t start, uint16_t cnt, uint8_t* buf)                             //read bytes from eeprom, start at start, cnt amount, buf filled with data
 {                                                                                       //
-  if((start<=E2END) && (cnt>0 && cnt <=E2END) && ((start+cnt)<=E2END))                  //
+  if((start<=E2END) && (cnt>0 && cnt <=E2END) && ((start+cnt)<=E2END))                  //check eeprom range, 0 until E2END, inclusive
   {                                                                                     //
-    for(uint16_t i=0;i<cnt;i++)                                                         //
+    for(uint16_t i=0;i<cnt;i++)                                                         //loop through all bytes to read
     {                                                                                   //
-      buf[i]=EEPROM.read(start);                                                        //
-      start++;                                                                          //
+      buf[i]=EEPROM.read(start);                                                        //read one byte at a time, filling the buffer
+      start++;                                                                          //next address
     }                                                                                   //
-    return true;                                                                        //
+    return true;                                                                        //done successfully
   }                                                                                     //
-  return false;                                                                         //
+  return false;                                                                         //failure, out of range
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-bool WriteEeprom(uint16_t start, uint16_t cnt, uint8_t* buf)                            //
+bool WriteEeprom(uint16_t start, uint16_t cnt, uint8_t* buf)                            //write bytes into eeprom, start at start, cnt amount, buf filled with data
 {                                                                                       //
-  if((start<=E2END) && (cnt>0 && cnt <=E2END) && ((start+cnt)<=E2END))                  //
+  if((start<=E2END) && (cnt>0 && cnt <=E2END) && ((start+cnt)<=E2END))                  //check eeprom range, 0 until E2END, inclusive
   {                                                                                     //
-    for(uint16_t i=0;i<cnt;i++)                                                         //
+    for(uint16_t i=0;i<cnt;i++)                                                         //loop through all bytes to write
     {                                                                                   //
-      EEPROM.write(start,buf[i]);                                                       //
-      start++;                                                                          //
+      EEPROM.write(start,buf[i]);                                                       //write a byte, at start, with i to track the byte
+      start++;                                                                          //increment start
     }                                                                                   //
-    return true;                                                                        //
+    return true;                                                                        //done successfully
   }                                                                                     //
-  return false;                                                                         //
+  return false;                                                                         //failure, out of range
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 bool CheckEepromForMagic()                                                              //read an address, check value, and return success 
@@ -76,30 +76,30 @@ uint8_t CheckResetRegister()                                                    
   switch(value)                                                                         //
   {                                                                                     //
     case 0x02:                                                                          //external reset flag
-      return 2;                                                                         //
+      return EXTERNAL_RESET_FLAG;                                                       //
     case 0x04:                                                                          //brownout flag
-      return 3;                                                                         //
+      return BROWNOUT_RESET_FLAG;                                                       //
     case 0x08:                                                                          //watchdog flag
-      return 4;                                                                         //
+      return WATCHDOG_RESET_FLAG;                                                       //
   }                                                                                     //
-  return 0;                                                                             //no reset
+  return NO_RESET_FLAG;                                                                 //no reset has happened, clean startup
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint16_t GetConfigStart()                                                               //get the address for the config
+uint16_t GetConfigStartAddress()                                                        //get the address for the config from eeprom
 {                                                                                       //
-  union16_t configStart;                                                                //
-  configStart.buf[0]=EEPROM.read(MAGIC_ADDRESS+2);                                      //byte 0, read from MAGIC_ADDRESS+2
-  configStart.buf[1]=EEPROM.read(MAGIC_ADDRESS+3);                                      //byte 1, read from MAGIC_ADDRESS+3
-  return configStart.val;                                                               //result
+  union16_t configStartAddress;                                                         //
+  configStartAddress.buf[0]=EEPROM.read(MAGIC_ADDRESS+2);                               //byte 0, read from MAGIC_ADDRESS+2
+  configStartAddress.buf[1]=EEPROM.read(MAGIC_ADDRESS+3);                               //byte 1, read from MAGIC_ADDRESS+3
+  return configStartAddress.val;                                                        //result
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 bool ConfigFromEeprom(uint16_t start,uint16_t cnt, uint8_t* buf)                        //start address, byte count to read, buffer to fill
 {                                                                                       //
-  return ReadEeprom(GetConfigStart() + start,cnt,buf);                                  //read config from eeprom
+  return ReadEeprom(GetConfigStartAddress() + start,cnt,buf);                           //read config from eeprom
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 bool ConfigToEeprom(uint16_t start,uint16_t cnt, uint8_t* buf)                          //start address, byte count to write, buffer to use
 {                                                                                       //
-  return WriteEeprom(GetConfigStart() + start,cnt,buf);                                 //write config to eeprom
+  return WriteEeprom(GetConfigStartAddress() + start,cnt,buf);                          //write config to eeprom
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

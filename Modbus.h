@@ -70,7 +70,5 @@
   void mbTimerEvent();                                                                  //called on timer event, used to keep track of silence, automagic callback
   uint8_t mbHandleModbusRead(uint16_t address,uint16_t* value);                         //handle a read action, with an internal address and put the result in the pointer argument given
   uint8_t mbHandleModbusWrite(uint16_t address,uint16_t* value);                        //handle a write action, with an  internal address and write the given pointer argument    
-  uint8_t mbHandleModbusRead(uint16_t address,uint16_t* value);                         //handle a read action, with an internal address and put the result in the pointer argument given
-  uint8_t mbHandleModbusWrite(uint16_t address,uint16_t* value);                        //handle a write action, with an  internal address and write the given pointer argument
- 
+
 #endif                                                                                  

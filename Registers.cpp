@@ -10,41 +10,41 @@ uint8_t ReadDeviceReg(uint16_t address,uint16_t* value)                         
   return EXCEPTION_NONE;                                                                //return success (or lack of exceptions)
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint8_t WriteDeviceReg(uint16_t address,uint16_t* value)                                //
+uint8_t WriteDeviceReg(uint16_t address,uint16_t* value)                                //write a register of the device with the least significant byte
 {                                                                                       //
-  SET_REGISTER(address,*value);                                                         //write given value to address
+  SET_REGISTER(address,(*value)&0XFF);                                                  //write given value to address, values is cut down to least significant bytes
   return EXCEPTION_NONE;                                                                //return success (or lack of exceptions)
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint8_t ReadEepromReg(uint16_t address,uint16_t* value)                                 //read a value from eeprom. eeprom is read in bytes
+uint8_t ReadEepromReg(uint16_t address,uint16_t* value)                                 //read a value from eeprom. eeprom is read in bytes, 2 bytes at a time
 {                                                                                       //
-  union16_t result;
-  address=address+address;
-  result.buf[0]=EEPROM.read(address);
-  result.buf[1]=EEPROM.read(address+1);
-  *value=result.val;
+  union16_t result;                                                                     //16 bit result
+  address=address+address;                                                              //get the actual address, internal 1 byte per adress, so 2 adresses per outside adress
+  result.buf[0]=EEPROM.read(address);                                                   //get first byte
+  result.buf[1]=EEPROM.read(address+1);                                                 //get second byte
+  *value=result.val;                                                                    //push the result value into the referenced variable
+  return EXCEPTION_NONE;                                                                //success, no exception
+}                                                                                       //
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+uint8_t WriteEepromReg(uint16_t address,uint16_t* value)                                //write a given value to eeprom, write 16 bytes at a time
+{                                                                                       //
+  union16_t result;                                                                     //16 bit result value
+  result.val = *value;                                                                  //put the given value into the variable
+  address=address+address;                                                              //find the actual address
+  EEPROM.write(address,result.buf[0]);                                                  //write the first byte to the first address
+  EEPROM.write(address+1,result.buf[1]);                                                //write the second byte to the second address
+  return EXCEPTION_NONE;                                                                //success
+}
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+uint8_t ReadAlarmReg(uint16_t address,uint16_t* value)                                  //read an alarm address 
+{                                                                                       //
+  *value=pr_ds.alarms[address];                                                         //set the value pointer with the requested alarm address
   return EXCEPTION_NONE;                                                                //success
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint8_t WriteEepromReg(uint16_t address,uint16_t* value)                                //write a given value to eeprom, only 
-{                                                                                       //
-  union16_t result;
-  result.val = *value;
-  address=address+address;
-  EEPROM.write(address,result.buf[0]);
-  EEPROM.write(address+1,result.buf[1]);
-  return EXCEPTION_NONE;                                                                //success
-}
-//--------------------------------------------------------------------------------------
-uint8_t ReadAlarmReg(uint16_t address,uint16_t* value)
-{
-  *value=pr_ds.alarms[address];
-  return EXCEPTION_NONE;
-}
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t ReadVersionReg(uint16_t address,uint16_t* value)                                //read version information from memory
 {                                                                                       //
-  switch(address)                                                                       //read all data and return the 16 bit value 
+  switch(address)                                                                       //read all data and return the 16 bit value (2 bytes)
   {                                                                                     //
     case 0:                                                                             //
       *value=(VDATE[0]<<8)|(VDATE[1]);                                                  //

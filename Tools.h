@@ -5,7 +5,12 @@
   #include "Arduino.h"                                                                  //arduino definitions
   #include <EEPROM.h>
   #include "Exceptions.h"                                                               //header containing exception codes
-                                                                                        //
+
+  #define NO_RESET_FLAG 0x00                                                            //device was cleanly started
+  #define EXTERNAL_RESET_FLAG 0x02                                                      //device was reset externally (reset input)
+  #define BROWNOUT_RESET_FLAG 0x03                                                      //device was reset through brownout
+  #define WATCHDOG_RESET_FLAG 0x04                                                      //device was reset through the wachdog
+  
   #define SET_REGISTER(addr,value) ((*(volatile uint8_t *)addr)=value)                  //set an actual register address with given value
   #define GET_REGISTER(addr) (*(volatile uint8_t *)addr)                                //return actual register from given address
                                                                                         //
@@ -50,7 +55,7 @@
   bool ConfigFromEeprom(uint16_t start,uint16_t cnt, uint8_t* buf);                     //load from eeprom based upon config start address
   bool ConfigToEeprom(uint16_t start,uint16_t cnt, uint8_t* buf);                       //write to eeprom based upon config start address
                                                                                         //
-  bool CheckEepromForMagic();                                                           //read at a given address a certain value
-  uint8_t CheckResetRegister();                                                         //read and clear the reset register
+  bool CheckEepromForMagic();                                                           //read at a given address a certain magic value, return result
+  uint8_t CheckResetRegister();                                                         //read and clear the reset register, returning the result
                                                                                         //
 #endif                                                                                  //

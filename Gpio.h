@@ -10,7 +10,7 @@
   #define GPIO_OUTPUT                   GPIO_OUTPUT_LOW                                 //
   #define GPIO_OUTPUT_HIGH              0x04                                            //
   #define GPIO_INPUT_ANALOG             0x05                                            //
-  #define GPIO_OUTPUT_ANALOG            0x06                                            //  
+  #define GPIO_OUTPUT_ANALOG            0x06                                            //
   #define GPIO_SPECIAL                  0x07                                            //
   #define GPIO_OUTPUT_FLIP              0x08                                            //
   #define GPIO_IN                       0x00                                            //
