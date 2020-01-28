@@ -5,14 +5,14 @@
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 cl_t cl_ds;                                                                             //control loop data structure
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint8_t clSetup()                                                                       //
+uint8_t clSetup()                                                                       //setup the control loop, load settings and setup the project
 {                                                                                       //
   if(CheckEepromForMagic())                                                             //check if a magic number of on a certain address
-  {                                                                                     //           
+  {                                                                                     //
     if(ConfigFromEeprom(0, MB_SETTING_SIZE, mb_ds.settings))                            //load modbus settings from eeprom, into mb_ds.settings
     {                                                                                   //
       ConfigFromEeprom(MB_SETTING_SIZE, CL_SETTING_SIZE, cl_ds.settings);               //read control loop settings from eeprom
-      cl_ds.configLoaded=true;                                                          //set the configloaded flag
+      cl_ds.configLoaded=true;                                                          //set the configloaded flag to true
     }                                                                                   //
   }                                                                                     //
                                                                                         //
