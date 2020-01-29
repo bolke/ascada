@@ -28,6 +28,6 @@
                                                                                         
   uint8_t prSetup();                                                                    //project initialize, run once at startup
   uint8_t prLoop();                                                                     //project run
-  uint8_t prReadRegister(uint16_t address,uint16_t* value);                             //read a project register
-  uint8_t prWriteRegister(uint16_t address,uint16_t* value);                            //write a project register
+  uint8_t prReadRegister(uint16_t address,uint16_t* value);                             //read a project register, project specific modbus reading
+  uint8_t prWriteRegister(uint16_t address,uint16_t* value);                            //write a project register, project specific modbus writing
 #endif                                                                                  
