@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #include "Modbus.h"                                                                     //header for the outside world
-#include "Registers.h"
+#include "Registers.h"                                                                  //register definitions of registers
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #define REQ_REGION_START (REGION_START[mb_ds.msgFunc-1])                                //return the region coupled with the function, see modbusmapping.h
 #define REQ_REGION_END (REQ_REGION_START+REGION_RANGE)                                  //return the end of the region coupled with the function
@@ -22,6 +22,7 @@ uint8_t GetExpectedLength()                                                     
   {                                                                                     //
     if(mb_ds.msgFunc>=7)                                                                //none of the 6 default functions
     {                                                                                   //insert any special functions here, if necessary
+      
     }                                                                                   //otherwise just return the REQUEST_LENGTH, as by default
   }                                                                                     //if there's no function, there's no expected length.
   else                                                                                  //
