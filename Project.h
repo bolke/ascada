@@ -16,7 +16,7 @@
                                                                                         
   #define GPIO_CNT                      0x15                                            //total number of gpio devices, connected to device
   #define GPIO_DEFAULT                  GPIO_INPUT_HIGH                                 //default value of unused gpio
-                                                                                        
+                
   typedef struct                                                                        
   {                                                                                     
     gpioDef_t gpio[GPIO_CNT];                                                           //project gpio definition
@@ -30,4 +30,5 @@
   uint8_t prLoop();                                                                     //project run
   uint8_t prReadRegister(uint16_t address,uint16_t* value);                             //read a project register, project specific modbus reading
   uint8_t prWriteRegister(uint16_t address,uint16_t* value);                            //write a project register, project specific modbus writing
-#endif                                                                                  
+
+  #endif                                                                                  

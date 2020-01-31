@@ -14,11 +14,11 @@
   #define SET_REGISTER(addr,value) ((*(volatile uint8_t *)addr)=value)                  //set an actual register address with given value
   #define GET_REGISTER(addr) (*(volatile uint8_t *)addr)                                //return actual register from given address
                                                                                         //
-  #define MB_MAP_FULL(start, cnt, funcPtr, isRead) {start,cnt,funcPtr,isRead}           //load the full 
-  #define MB_READ_RANGE(start,cnt,funcPtr) MB_MAP_FULL(start,cnt,funcPtr,true)          //read multiple value
-  #define MB_WRITE_RANGE(start,cnt,funcPtr) MB_MAP_FULL(start,cnt,funcPtr,false)        //write multiple values
-  #define MB_WRITE(start,funcPtr) MB_WRITE_RANGE(start,1,funcPtr)                       //write a single value
-  #define MB_READ(start,funcPtr) MB_READ_RANGE(start,1,funcPtr)                         //read a single value
+  #define MB_MAP_FULL(start, cnt, funcPtr, isRead) {start,cnt,funcPtr,isRead}           //all the parameters to map a function into memory
+  #define MB_READ_RANGE(start,cnt,funcPtr) MB_MAP_FULL(start,cnt,funcPtr,true)          //read multiple value, so read flag is true
+  #define MB_WRITE_RANGE(start,cnt,funcPtr) MB_MAP_FULL(start,cnt,funcPtr,false)        //write multiple values, so read flag is false
+  #define MB_WRITE(start,funcPtr) MB_WRITE_RANGE(start,1,funcPtr)                       //write a single value, so length is 1
+  #define MB_READ(start,funcPtr) MB_READ_RANGE(start,1,funcPtr)                         //read a single value, so length is 1
                                                                                         //
   template <typename T> void PROGRAM_READTYPE (const T * src, T& dst)                   //read from flash and copy to memory
   {                                                                                     //
@@ -36,7 +36,7 @@
   } modbusMapping_t;                                                                    //name of struct type
                                                                                         //
   typedef union{                                                                        //
-    uint8_t buf[2];                                                                     //2 bytes make a short
+    uint8_t buf[2];                                                                     //2 bytes make a 16 bit short
     uint16_t val=0;                                                                     //short value
   } union16_t;                                                                          //mapping bytes onto short
                                                                                         //
