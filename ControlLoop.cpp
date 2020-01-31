@@ -53,12 +53,11 @@ uint8_t clSetup()                                                               
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t clLoop()                                                                        //
 {                                                                                       //
-  if(cl_ds.isRunning)
-  {    
-    prLoop();
-    return EXCEPTION_NONE;                                                              //
-  }
-  return EXCEPTION_NOT_RUNNING;
+  if(cl_ds.isRunning)                                                                   //while running
+  {                                                                                     //
+    return prLoop();                                                                    //project loop, returns exception (if any)
+  }                                                                                     //
+  return EXCEPTION_NOT_RUNNING;                                                         //
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t clStart()                                                                       //
