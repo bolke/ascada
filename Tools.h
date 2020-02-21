@@ -35,7 +35,8 @@
     bool isRead;                                                                        //is it a reading function, used when executing the function
   } modbusMapping_t;                                                                    //name of struct type
                                                                                         //
-  typedef union{                                                                        //
+  typedef union                                                                         //
+  {
     uint8_t buf[2];                                                                     //2 bytes make a 16 bit short
     uint16_t val=0;                                                                     //short value
   } union16_t;                                                                          //mapping bytes onto short
