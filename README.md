@@ -45,3 +45,27 @@ r/w  func|coil/register|data address |type|r/w|original name                   |
 Device registers are mapped into holding registers. The atmega328p addresses described in the atmega328p datasheet are read and writeable at 0x0000 to 0x00C7, all 199 registers. 
 EEPROM registers are mapped onto holding registers 0x00C7 to 0x02C7, 512 registers of 16 bit (1024 8 bit EEPROM registers). Read and writeable through modbus.
 See http://www.simplymodbus.ca/ for an explanation of modbus (rtu/tcp/rtu over tcp/etc). 
+
+# Registers
+Modbus makes it possibly to read data from the device through a serial protocol. aSCADA maps functions to address ranges. This is done in 
+Registers.h. There is an array of mapped functions in flash (saving memory) with starting addresses and adress ranges. The addresses used in 
+these definitions are modbus addresses, but when the coupled function is called the address is remapped to start at 0 (requested address - starting
+address). The addresses used are the addresses in the table above, in hex format. 
+
+```
+    MB_READ_RANGE(0x9C41,0x00C7,ReadDeviceReg),           // read a device register
+    MB_WRITE_RANGE(0x9C41,0x00C7,WriteDeviceReg),         // write to a device register, might break / brick or halt device
+    MB_READ_RANGE(0x9D08,0x0200,ReadEepromReg),           // read from eeprom, 0x9D08 == eeprom address 0, all addresses are mapped
+    MB_WRITE_RANGE(0x9D08,0x0200,WriteEepromReg),         // write to eeprom, 0x9D08 == eeprom address 0, all addresses are mapped
+    MB_READ_RANGE(0x7531,0x0008,ReadVersionReg),          // read the project version information (VDATE and VTIME)
+    MB_READ(0x7539,ReadStatusReg),                        // read the status register, which is only 16 bit in size
+    MB_READ(0x753A,ReadSettingsReg),                      // read data from the settings struct, which is also only 16 bit 
+    MB_READ_RANGE(0x753B,0x0002,ReadUptimeReg),           // read uptime, uint32_t value, passed the value that millis() returns
+    MB_READ_RANGE(0x753D,ALARM_WORD_CNT,ReadAlarmReg),    // read alarm bits, ALARM_WORD_CNT is calculated at compile time
+    MB_WRITE_RANGE(0x0001,0x0003,WriteFuncCoil),          // bits to toggle, use these to toggle function (simple rpc ... kinda)
+    MB_READ_RANGE(0x9F08,0x200,prReadRegister),           // 256 multi purpoise registers for the project
+    MB_WRITE_RANGE(0x9F08,0x200,prWriteRegister)          // reading and writing
+```
+
+If you want to make any ranges available, add the functions, increment the MB_CNT #define, and add the ranges. Ranges are bound 
+to how modbus works, so the registers / functions / read - writing etc are bound to what addresses are used. 
