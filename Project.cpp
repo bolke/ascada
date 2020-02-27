@@ -21,7 +21,7 @@ uint8_t prWriteRegister(uint16_t address,uint16_t* value)
 uint8_t prSetup()
 {
   tick=millis();
-  prSetGpio(LED_PIN,GPIO_OUTPUT_HIGH);
+  prSetGpio(&(pr_ds.gpio[LED_PIN]),GPIO_OUTPUT_HIGH);
   return EXCEPTION_NONE;
 }
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ uint8_t prLoop()
 {
   if(millis()-tick > 1000)
   {
-    prSetGpio(&(pr_ds.gpio[0x0D]),GPIO_OUTPUT_FLIP);
+    prSetGpio(&(pr_ds.gpio[LED_PIN]),GPIO_OUTPUT_FLIP);
     tick=millis();
   }
   return EXCEPTION_NONE;

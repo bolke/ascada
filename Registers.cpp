@@ -132,10 +132,3 @@ uint8_t WriteFuncCoil(uint16_t address,uint16_t* value)                         
   }                                                                                     //
   return result;                                                                        //
 }                                                                                       //
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint8_t ReadProjectReg(uint16_t address,uint16_t* value)
-{
-  
-  return EXCEPTION_NONE;
-}
-

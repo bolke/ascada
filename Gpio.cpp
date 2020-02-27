@@ -9,7 +9,7 @@ uint8_t prInitOfflineGpio()                                                     
   for(uint16_t i=0;i<GPIO_CNT;i++)                                                      //loop through all the gpio
   {                                                                                     //
     pr_ds.gpio[i].address=i;
-    if(prInitGpio(&(pr_ds.gpio[i]),GPIO_DEFAULT) != EXCEPTION_NONE)                  //initialize all the gpio when offline
+    if(prInitGpio(&(pr_ds.gpio[i]),GPIO_DEFAULT) != EXCEPTION_NONE)                     //initialize all the gpio when offline
     {                                                                                   //
       return EXCEPTION_FAILED_TO_EXECUTE;                                               //failed to initialize, stop with initialisation
     }                                                                                   //
@@ -31,7 +31,7 @@ uint8_t prInitOnlineGpio()                                                      
   return EXCEPTION_NONE;                                                                //
 }                                                                                       //
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-uint8_t prInitGpio(gpioDef_t* gpio, uint8_t setting){                                    //
+uint8_t prInitGpio(gpioDef_t* gpio, uint8_t setting){                                   //
   gpio->special=false;                                                                  //
   gpio->analog=false;                                                                   //
   gpio->inOut = GPIO_IN;                                                                //
@@ -39,28 +39,21 @@ uint8_t prInitGpio(gpioDef_t* gpio, uint8_t setting){                           
   switch(setting)                                                                       //
   {                                                                                     //
     case GPIO_INPUT_LOW:                                                                //
-      gpio->inOut = GPIO_IN;                                                            //
-      gpio->lowHigh = GPIO_LOW;                                                         //
       break;                                                                            //
     case GPIO_INPUT_HIGH:                                                               //
-      gpio->inOut = GPIO_IN;                                                            //
       gpio->lowHigh = GPIO_HIGH;                                                        //
       break;                                                                            //
     case GPIO_OUTPUT_LOW:                                                               //
       gpio->inOut = GPIO_OUT;                                                           //
-      gpio->lowHigh = GPIO_LOW;                                                         //
       break;                                                                            //
     case GPIO_OUTPUT_HIGH:                                                              //
       gpio->inOut = GPIO_OUT;                                                           //
       gpio->lowHigh = GPIO_HIGH;                                                        //
       break;                                                                            //
     case GPIO_INPUT_ANALOG:                                                             //
-      gpio->lowHigh=GPIO_LOW;                                                           //
-      gpio->inOut = GPIO_IN;                                                            //
       gpio->analog=true;                                                                //
       break;                                                                            //
     case GPIO_OUTPUT_ANALOG:                                                            //
-      gpio->lowHigh=GPIO_LOW;                                                           //
       gpio->inOut = GPIO_OUT;                                                           //
       gpio->analog=true;                                                                //
       break;                                                                            //
