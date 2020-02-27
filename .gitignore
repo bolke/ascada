@@ -1,0 +1,6 @@
+*.h.bak
+/.vs/
+*.ino.bak
+/*.h~
+/*.cpp.bak
+/*.cpp~
