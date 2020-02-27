@@ -303,7 +303,7 @@ void mbSerialEvent()
       {                                                                                 
         mb_ds.expectedLength=GetExpectedLength();                                       
       }                                                                                 
-      if(mb_ds.msgPtr==mb_ds.expectedLength)                                             byte has been read
+      if(mb_ds.msgPtr==mb_ds.expectedLength)                                           
       {                                                                                 
         HandleRequest();                                                                
         ignore=true;                                                                    
