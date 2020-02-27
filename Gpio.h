@@ -32,12 +32,11 @@
   }                                                                                     //
   gpioDef_t;                                                                            //
 
-  uint8_t prInitOnlineGpioDef();                                                        //initialize gpio in online mode
-  uint8_t prInitOfflineGpioDef();                                                       //initialize gpio in offline mode
+  uint8_t prInitOnlineGpio();                                                           //initialize gpio in online mode
+  uint8_t prInitOfflineGpio();                                                          //initialize gpio in offline mode
                                                                                         //                                                                                        
-  uint8_t prInitGpioDef(gpioDef_t* gpioDef, uint8_t setting);                           //set the values of a gpio element according to requested setting
-  uint8_t prEnableGpioDef(gpioDef_t* gpioDef);                                          //set the gpio according to the requested gpio definition
+  uint8_t prInitGpio(gpioDef_t* gpioDef, uint8_t setting);                              //set the values of a gpio element according to requested setting
+  uint8_t prEnableGpio(gpioDef_t* gpioDef);                                             //set the gpio according to the requested gpio definition
 
-  uint8_t prSetGpioDef(gpioDef_t* gpioDef, uint8_t setting);
-  uint8_t prSetGpio(uint8_t gpioNr, uint8_t setting);
+  uint8_t prSetGpio(gpioDef_t* gpioDef, uint8_t setting);
 #endif
