@@ -1,7 +1,8 @@
 # aSCADA
-Arduino Atmega328 Scada base. Scada (Supervisory Control and Data Acquisition) system using arduino as base.
+Arduino (Atmega328) Scada base. Scada (Supervisory Control and Data Acquisition) system using arduino as base.
 Communication is done through modbus rtu. Acts as a platform for different hardware projects which communicate through 
-modbus.
+modbus. Atmega328 is what I use, but it should be fairly easy to adapt to any other platform. The only thing it needs 
+at this moment is a serial port and eeprom, and the eeprom is option. You could hardcode the eeprom.
 
 On startup, aSCADA tries to load settings from EEPROM and configure the device accordingly. If configured correctly, the EEPROM contains the following: 
 ```
@@ -28,21 +29,19 @@ If the settings fail to load from eeprom, the device will revert to default modb
 
 # Modbus RTU
 Contains a modbus-rtu client implementation. Modbus is one master, multiple clients, which only respond on addressed requests. 
-Because of history naming of addresses are a bit weird, but that's history.
+Because of history naming of addresses are a bit weird, and aren't used anymore for the purposes that they were created for.
 
 ```
------------------------------------------------------------------
-r/w  func|coil/register|data address |type|r/w|original name
------------------------------------------------------------------
-1/5      |1-9999       |0x0000-0x270E|bit |r/w|Discrete output coils.
-2        |10001-19999  |0x0000-0x270E|bit |r  |Discrete input contacts.
-4        |30001-39999  |0x0000-0x270E|byte|r  |Analog input registers.
-3/6      |40001-49999  |0x0000-0x270E|byte|r/w|Analog output holding registers.
-------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------
+r/w  func|coil/register|data address |type|r/w|original name                   |description
+-------------------------------------------------------------------------------------------------------
+1/5      |1-9999       |0x0000-0x270E|bit |r/w|Discrete output coils.          |read and write bits
+2        |10001-19999  |0x0000-0x270E|bit |r  |Discrete input contacts.        |read only bits
+4        |30001-39999  |0x0000-0x270E|byte|r  |Analog input registers.         |read only uint16_t
+3/6      |40001-49999  |0x0000-0x270E|byte|r/w|Analog output holding registers.|read and write uint16_t
+--------------------------------------------------------------------------------------------------------
 ```
 
 Device registers are mapped into holding registers. The atmega328p addresses described in the atmega328p datasheet are read and writeable at 0x0000 to 0x00C7, all 199 registers. 
-
 EEPROM registers are mapped onto holding registers 0x00C7 to 0x02C7, 512 registers of 16 bit (1024 8 bit EEPROM registers). Read and writeable through modbus.
-
-See http://www.simplymodbus.ca/ for an explanation of modbus (rtu/tcp/etc). 
+See http://www.simplymodbus.ca/ for an explanation of modbus (rtu/tcp/rtu over tcp/etc). 
