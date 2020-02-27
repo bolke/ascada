@@ -7,7 +7,7 @@ cl_t cl_ds;                                                                     
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 uint8_t clSetup()                                                                       //setup the control loop, load settings and setup the project
 {                                                                                       //
-  if(CheckEepromForMagic())                                                             //check if a magic number of on a certain address
+  if(CheckEepromForMagic())                                                             //check if a magic number is on a certain address, and load the config address
   {                                                                                     //
     if(ConfigFromEeprom(0, MB_SETTING_SIZE, mb_ds.settings))                            //load modbus settings from eeprom, into mb_ds.settings
     {                                                                                   //
@@ -29,12 +29,12 @@ uint8_t clSetup()                                                               
     {                                                                                   //
       mbSetup(DEFAULT_BAUDRATE, DEFAULT_SLAVE_ID);                                      //load default baudrate and default slave id
     }                                                                                   //
-    else                                                                                //
-    {                                                                                   //
+    else                                                                                //    
+    {                                                                                   //      
       mbSetup(mb_ds.baudrate, mb_ds.slaveId);                                           //load baudrate and slave id, out of the loaded configuration
     }                                                                                   //
     if(cl_ds.startRunning)                                                              //start at boot?    
-    {                                                                                   //
+    {                                                                                   //            
       clStart();                                                                        //start 
     }                                                                                   //
   }                                                                                     //
@@ -45,7 +45,7 @@ uint8_t clSetup()                                                               
                                                                                         //
   if(!cl_ds.isRunning)                                                                  //if we arent running
   {                                                                                     //
-    prInitOfflineGpioDef();                                                             //initialize the offline gpio settings
+    prInitOfflineGpio();                                                                //initialize the offline gpio settings
   }                                                                                     //
                                                                                         //
   return EXCEPTION_NONE;                                                                //no exceptions
@@ -69,12 +69,8 @@ uint8_t clStart()                                                               
     {                                                                                   //
       cl_ds.halted=HALTED_NONE;                                                         //we aren't halted anymore
       cl_ds.isRunning=true;                                                             //and we are running now
-      prInitOnlineGpioDef();                                                            //initialize the gpio when online
-      result=prSetup();
-      if(result==EXCEPTION_NONE)                                                        //if we arent successfull
-      {         
-        result=prSetup();
-      }
+      prInitOnlineGpio();                                                               //initialize the gpio when online
+      result=prSetup();      
       if(result!=EXCEPTION_NONE)
       {
          clStop();                                                                      //stop 
@@ -94,7 +90,7 @@ uint8_t clStop()                                                                
     cl_ds.isRunning=false;                                                              //we aren't now
     cl_ds.halted=HALTED_STOPPED;                                                        //and we have stopped
     result=EXCEPTION_NONE;                                                              //success
-    prInitOfflineGpioDef();                                                             //initialize the gpio for offline running
+    prInitOfflineGpio();                                                                //initialize the gpio for offline running
   }                                                                                     //
                                                                                         //
   return result;                                                                        //return the result
