@@ -2,7 +2,7 @@
 #include "Project.h"
 #include "Exceptions.h"
 
-#define LED_PIN 0x0D
+#define LED_PIN 0x00
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 pr_t pr_ds;                                                                             //project data structure
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -21,6 +21,7 @@ uint8_t prWriteRegister(uint16_t address,uint16_t* value)
 uint8_t prSetup()
 {
   tick=millis();
+  pr_ds.gpio[LED_PIN].address = 0x0D;
   prSetGpio(&(pr_ds.gpio[LED_PIN]),GPIO_OUTPUT_HIGH);
   return EXCEPTION_NONE;
 }

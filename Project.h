@@ -7,14 +7,14 @@
   #define VDATE                         "Jan 28 2020"                                   //build date, used as version, format "MMM DD YYYY"
   #define VTIME                         "23:16:12"                                      //build time, used as version, format "hh:mm:ss"
                                                                                         
-  #define PROJECT_ID                    "00"                                            //unique project identifier, format base64 "xx"
+  #define PROJECT_ID                    "01"                                            //unique project identifier, format base64 "xx"
   #define MAGIC_NUMBER                  0xC369                                          //eeprom value used to check if eeprom is set
   #define MAGIC_ADDRESS                 0x00                                            //eeprom address to read the magic number from
                                                                                         
-  #define ALARM_WORD_CNT                0x10                                            //number of reserved alarm words 
+  #define ALARM_WORD_CNT                0x01                                            //number of reserved alarm words 
   #define ALARM_BIT_CNT                 (ALARM_WORD_CNT*0x10)                           //total number of alarms, number of words time 16
                                                                                         
-  #define GPIO_CNT                      0x15                                            //total number of gpio devices, connected to device
+  #define GPIO_CNT                      0x01                                            //total number of gpio devices, connected to device
   #define GPIO_DEFAULT                  GPIO_INPUT_HIGH                                 //default value of unused gpio
                 
   typedef struct                                                                        
