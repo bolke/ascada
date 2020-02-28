@@ -69,3 +69,39 @@ address). The addresses used are the addresses in the table above, in hex format
 
 If you want to make any ranges available, add the functions, increment the MB_CNT #define, and add the ranges. Ranges are bound 
 to how modbus works, so the registers / functions / read - writing etc are bound to what addresses are used. 
+
+## Holding register
+  00-c7 == device registers
+  c7-4c6 == eeprom registers
+  
+## Input register
+  0-7 == version information 
+    Mmm dd yyyy hh:mm:ss
+  8 == cl_ds.status
+    /* bit description
+     * [0] running 
+     * [1] halted bit 0 (0==false,1==halted,2==paused,3==stopped)
+     * [2] halted bit 1 
+     * [3] unexpected shutdown bit 0 same as register 0x54 bit 1/2/3
+     * [4] unexpected shutdown bit 1
+     * [5] unexpected shutdown bit 2
+     * [6] config loaded 
+     * [7] alarm available
+     * [8]
+     * [9]
+     * [A]
+     * [B]
+     * [C]
+     * [D]
+     * [E]
+     * [F]
+     */
+  9 alarmBitCnt
+  A-19 alarm words, 16 dec total
+  1A millis low bytes
+  1B millis high bytes
+  
+## WriteBit
+  80 ff00 start() or resume()
+  81 ff00 pause()
+  82 ff00 stop()
