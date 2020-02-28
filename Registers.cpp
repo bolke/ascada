@@ -84,7 +84,14 @@ uint8_t ReadStatusReg(uint16_t address,uint16_t* value)
 
 uint8_t ReadSettingsReg(uint16_t address,uint16_t* value)
 {
-  *value=cl_ds.settings[address];
+  if(address == 0)
+  {
+    *value=cl_ds.settings[address];
+  }
+  else if(address == 1)
+  {
+    *value=ALARM_WORD_CNT;
+  }
   return EXCEPTION_NONE;
 }
 
