@@ -98,7 +98,7 @@ to how modbus works, so the registers / functions / read - writing etc are bound
      * [E]
      * [F]
      */
-  9 alarmBitCnt
+  9 number of alarm words (total alarm count is wordcount * 16)
   A millis low bytes
   B millis high bytes
   C-1C alarm registers, default hex 10 in size
