@@ -95,7 +95,7 @@ void HandleException(uint8_t exceptionCode=0x01)
 
 uint8_t HandleBroadcast()                                                               
 {                                                                                       
-  return EXCEPTION_NONE;                                                                
+  return EXCEPTION_NONE;
 }                                                                                       
 
 uint8_t ReadRegisters()                                                                 
@@ -304,11 +304,11 @@ void mbSerialEvent()
         mb_ds.expectedLength=GetExpectedLength();                                       
       }                                                                                 
       if(mb_ds.msgPtr==mb_ds.expectedLength)                                           
-      {                                                                                 
+      {
         HandleRequest();                                                                
         ignore=true;                                                                    
-      }                                                                                 
-    }                                                                                   
+      }
+    }
   }                                                                                     
   mb_ds.silence_cnt=0;                                                                  
   if(ignore)                                                                            
@@ -349,4 +349,3 @@ uint8_t mbHandleModbusWrite(uint16_t address, uint16_t* value)
   }                                                                                     
   return EXCEPTION_INVALID_ADDRESS;                                                     
 }                                                                                       
-
