@@ -1,10 +1,11 @@
 #include "Ascada.h"
 
+#define GPIO_SET(A,B)		prSetGpio(&(pr_ds.gpio[A]),B)
 #define LED_PIN 0x0D
-
+  
 pr_t pr_ds;                                                                          
 
-unsigned long tick=0;                                                                
+uint32_t tick=0;                                                                
 
 uint8_t prReadRegister(uint16_t address,uint16_t* value)
 {
