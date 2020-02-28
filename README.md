@@ -77,7 +77,8 @@ to how modbus works, so the registers / functions / read - writing etc are bound
 ## Input register
 ```
   0-7 == version information 
-    Mmm dd yyyy hh:mm:ss
+    Mmm dd yyyy hh:mm:ss, returned without spaces, as seen in the following example:
+	Jan012020 151905
   8 == cl_ds.status
     /* bit description
      * [0] running 
@@ -98,9 +99,9 @@ to how modbus works, so the registers / functions / read - writing etc are bound
      * [F]
      */
   9 alarmBitCnt
-  A-19 alarm words, 16 dec total
-  1A millis low bytes
-  1B millis high bytes
+  A millis low bytes
+  B millis high bytes
+  C-1C alarm registers, default hex 10 in size
 ```
   
 ## WriteBit
