@@ -306,8 +306,7 @@ void mbSerialEvent()
       if(mb_ds.msgPtr==mb_ds.expectedLength)
       {
         HandleRequest();
-        mb_ds.msgPrt=0;
-        mb_ds.expectedLength=0;
+        ignore=true;
       }
     }
   }
