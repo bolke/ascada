@@ -1,7 +1,7 @@
 #ifndef PROJECT_H                                                                      
   #define PROJECT_H                                                                    
-                                                                                       
-  #include "Tools.h"                                                                   
+
+  #include <stdint.h>        
   #include "Gpio.h"
   
   #define VDATE                         "Jan 28 2020"                                   
@@ -16,7 +16,7 @@
                                                                                         
   #define GPIO_CNT                      0x15                                            
   #define GPIO_DEFAULT                  GPIO_INPUT_HIGH                                 
-                
+
   typedef struct                                                                        
   {                                                                                     
     gpioDef_t gpio[GPIO_CNT];                                                           

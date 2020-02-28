@@ -1,7 +1,4 @@
-#include "Tools.h"
-#include "ControlLoop.h"                                                                
-#include "Modbus.h"                                                                     
-#include "Registers.h"                                                                  
+#include "Ascada.h"
 
 cl_t cl_ds;                                                                             
 

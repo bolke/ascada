@@ -1,7 +1,7 @@
 #ifndef GPIO_H
-  #define GPIO_H
-
-  #include "Tools.h"
+  #define GPIO_H  
+  
+  #include <stdint.h>
   
   #define GPIO_INPUT_LOW                0x01                                            
   #define GPIO_INPUT                    GPIO_INPUT_LOW                                  

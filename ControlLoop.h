@@ -1,7 +1,7 @@
 #ifndef CONTROLLOOP_H                                                                   
 #define CONTROLLOOP_H                                                                   
                                                                                         
-  #include "Tools.h"                                                               
+  #include <stdint.h>                                                              
                                                                                         
   #define HALTED_NONE 0                                                                 
   #define HALTED_HALTED 1                                                               
