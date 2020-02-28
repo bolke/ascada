@@ -75,6 +75,7 @@ to how modbus works, so the registers / functions / read - writing etc are bound
   c7-4c6 == eeprom registers
   
 ## Input register
+```
   0-7 == version information 
     Mmm dd yyyy hh:mm:ss
   8 == cl_ds.status
@@ -100,8 +101,11 @@ to how modbus works, so the registers / functions / read - writing etc are bound
   A-19 alarm words, 16 dec total
   1A millis low bytes
   1B millis high bytes
+```
   
 ## WriteBit
+```
   80 ff00 start() or resume()
   81 ff00 pause()
   82 ff00 stop()
+```
