@@ -2,23 +2,24 @@
   #define GPIO_H
 
   #include <stdint.h>
-
-  #define GPIO_INPUT_LOW                0x01
-  #define GPIO_INPUT                    GPIO_INPUT_LOW
-  #define GPIO_INPUT_HIGH               0x02
-  #define GPIO_OUTPUT_LOW               0x03
-  #define GPIO_OUTPUT                   GPIO_OUTPUT_LOW
-  #define GPIO_OUTPUT_HIGH              0x04
-  #define GPIO_INPUT_ANALOG             0x05
-  #define GPIO_OUTPUT_ANALOG            0x06
-  #define GPIO_SPECIAL                  0x07
-  #define GPIO_OUTPUT_FLIP              0x08
-  #define GPIO_FLIP						GPIO_OUTPUT_FLIP
+  
   #define GPIO_IN                       0x00
   #define GPIO_OUT                      0x01
   #define GPIO_LOW                      0x00
   #define GPIO_HIGH                     0x01
-    
+  #define GPIO_INPUT_LOW				GPIO_IN
+  #define GPIO_INPUT                    GPIO_IN
+  #define GPIO_INPUT_HIGH               ((GPIO_INPUT)|(GPIO_HIGH<<1))
+  #define GPIO_OUTPUT_LOW               GPIO_OUT
+  #define GPIO_OUTPUT                   GPIO_OUTPUT_LOW
+  #define GPIO_OUTPUT_HIGH              ((GPIO_OUT)|(GPIO_HIGH<<1))
+  #define GPIO_ANALOG					0x04
+  #define GPIO_INPUT_ANALOG             ((GPIO_IN)|(GPIO_ANALOG))
+  #define GPIO_OUTPUT_ANALOG            ((GPIO_OUT)|(GPIO_ANALOG))
+  #define GPIO_SPECIAL                  0x08
+  #define GPIO_OUTPUT_FLIP              0x10
+  #define GPIO_FLIP						GPIO_OUTPUT_FLIP
+
   typedef union
   {
     struct
@@ -39,5 +40,5 @@
   uint8_t prInitGpio(gpioDef_t* gpioDef, uint8_t setting);
   uint8_t prEnableGpio(gpioDef_t* gpioDef);
 
-  uint8_t prSetGpio(gpioDef_t* gpioDef, uint8_t setting);  
+  uint8_t prSetGpio(gpioDef_t* gpioDef, uint8_t setting);
 #endif
