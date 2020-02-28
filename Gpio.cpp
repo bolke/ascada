@@ -135,4 +135,3 @@ uint8_t prSetGpio(gpioDef_t* gpio, uint8_t setting)
   }                                                                                     
   return prEnableGpio(gpio);
 }
-
