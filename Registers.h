@@ -18,19 +18,21 @@
   #define MB_CNT 12
 
   const modbusMapping_t mbMapping[MB_CNT] PROGMEM =
-  {
+  {    
     MB_READ_RANGE(0x9C41,0x00C7,ReadDeviceReg),
     MB_WRITE_RANGE(0x9C41,0x00C7,WriteDeviceReg),
     MB_READ_RANGE(0x9D08,0x0200,ReadEepromReg),
-    MB_WRITE_RANGE(0x9D08,0x0200,WriteEepromReg),
-    MB_READ_RANGE(0x7531,0x0008,ReadVersionReg),
-    MB_READ(0x7539,ReadStatusReg),
-    MB_READ(0x753A,ReadSettingsReg),
-    MB_READ_RANGE(0x753B,0x0002,ReadUptimeReg),
-    MB_READ_RANGE(0x753D,ALARM_WORD_CNT,ReadAlarmReg),
-    MB_WRITE_RANGE(0x0001,0x0003,WriteFuncCoil),
+    MB_WRITE_RANGE(0x9D08,0x0200,WriteEepromReg),   
     MB_READ_RANGE(0x9F08,0x200,prReadRegister),
     MB_WRITE_RANGE(0x9F08,0x200,prWriteRegister)
+     
+    MB_READ_RANGE(0x7531,0x0008,ReadVersionReg),
+    MB_READ(0x7539,ReadStatusReg),
+    MB_READ_RANGE(0x753A,0x0002,ReadSettingsReg),
+    MB_READ_RANGE(0x753C,0x0002,ReadUptimeReg),
+    MB_READ_RANGE(0x753E,ALARM_WORD_CNT,ReadAlarmReg),    
+    
+    MB_WRITE_RANGE(0x0001,0x0003,WriteFuncCoil),        
   };
 
 #endif
