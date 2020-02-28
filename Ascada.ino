@@ -53,7 +53,7 @@ void loop()
 	bool hasAlarms = 0;
 	for(uint8_t i=0;i<ALARM_WORD_CNT;i++)
 	{		
-		if(alarms[i] > 0)
+		if(pr_ds.alarms[i] > 0)
 		{
 			hasAlarms = 1;
 			break;
@@ -77,12 +77,12 @@ uint8_t clStart()
       if(result==EXCEPTION_NONE)
       {		  
         prInitOnlineGpio();         
+      }    
+	    else
+	    {
+        clStop();
       }
-	  else
-	  {
-        clStop()
-	  }
-    }
+    }    
   }
   return result;
 }
