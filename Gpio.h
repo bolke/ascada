@@ -2,7 +2,6 @@
   #define GPIO_H
 
   #include <stdint.h>
-  #include "Project.h"
 
   #define GPIO_INPUT_LOW                0x01
   #define GPIO_INPUT                    GPIO_INPUT_LOW
@@ -19,8 +18,7 @@
   #define GPIO_OUT                      0x01
   #define GPIO_LOW                      0x00
   #define GPIO_HIGH                     0x01
-  
-  #define GPIO_SET(A,B)					prSetGpio(&(pr_ds.gpio[A]),B)
+    
   typedef union
   {
     struct

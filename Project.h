@@ -24,6 +24,8 @@
   }
   pr_t;
 
+  #define GPIO_SET(A,B)          prSetGpio(&(pr_ds.gpio[A]),B)
+  
   extern pr_t pr_ds;
 
   uint8_t prSetup();
