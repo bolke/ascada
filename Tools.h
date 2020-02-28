@@ -14,7 +14,7 @@
   #define SET_REGISTER(addr,value) ((*(volatile uint8_t *)addr)=value)
   #define GET_REGISTER(addr) (*(volatile uint8_t *)addr)
 
-  #define MB_MAP_FULL(start, cnt, funcPtr, isRead) {start,cnt,funcPtr,isRead}
+  #define MB_MAP_FULL(start,cnt, funcPtr, isRead) {start,cnt,funcPtr,isRead}
   #define MB_READ_RANGE(start,cnt,funcPtr) MB_MAP_FULL(start,cnt,funcPtr,true)
   #define MB_WRITE_RANGE(start,cnt,funcPtr) MB_MAP_FULL(start,cnt,funcPtr,false)
   #define MB_WRITE(start,funcPtr) MB_WRITE_RANGE(start,1,funcPtr)
