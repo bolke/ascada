@@ -72,13 +72,16 @@ uint8_t clStart()
     if(cl_ds.halted==HALTED_NONE || cl_ds.halted==HALTED_PAUSED)
     {
       cl_ds.halted=HALTED_NONE;
-      cl_ds.isRunning=true;
-      prInitOnlineGpio();
+      cl_ds.isRunning=true;      
       result=prSetup();
-      if(result!=EXCEPTION_NONE)
-      {
-         clStop();
+      if(result==EXCEPTION_NONE)
+      {		  
+        prInitOnlineGpio();         
       }
+	  else
+	  {
+        clStop()
+	  }
     }
   }
   return result;
