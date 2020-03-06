@@ -98,10 +98,11 @@ to how modbus works, so the registers / functions / read - writing etc are bound
      * [E]
      * [F]
      */
-  9 number of alarm words (total alarm count is word count * 16)
-  A millis low bytes
-  B millis high bytes
-  C-1C alarm registers, default hex 10 in size
+  9 settings
+  A number of alarm words (total alarm count is word count * 16)  
+  B millis low bytes
+  C millis high bytes
+  D-1D alarm registers, default hex 10 in size
 ```
   
 ## WriteBit
