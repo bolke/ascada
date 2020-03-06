@@ -69,18 +69,26 @@ uint8_t clStart()
   uint8_t result=EXCEPTION_NEGATIVE_ACKNOWLEDGE;
   if(cl_ds.configLoaded && !cl_ds.isRunning)
   {
-    if(cl_ds.halted==HALTED_NONE || cl_ds.halted==HALTED_PAUSED)
+    bool paused = cl_ds.halted==HALTED_PAUSED;
+    if(cl_ds.halted==HALTED_NONE || paused)
     {
       cl_ds.halted=HALTED_NONE;
       cl_ds.isRunning=true;      
-      result=prSetup();
-      if(result==EXCEPTION_NONE)
-      {		  
-        prInitOnlineGpio();         
-      }    
-	    else
-	    {
-        clStop();
+      if(paused)
+      {
+        result=EXCEPTION_NONE;
+      }
+      else
+      {
+        result=prSetup();
+        if(result==EXCEPTION_NONE)
+        {		  
+          prInitOnlineGpio();         
+        }    
+	      else
+	      {
+          clStop();
+        }
       }
     }    
   }
