@@ -7,7 +7,7 @@
   #define VDATE                         "Jan 28 2020"
   #define VTIME                         "23:16:12"
 
-  #define PROJECT_ID                    "00"
+  #define PROJECT_ID                    "01"
   #define MAGIC_NUMBER                  0xC369
   #define MAGIC_ADDRESS                 0x00
 
@@ -31,4 +31,4 @@
   uint8_t prReadRegister(uint16_t address,uint16_t* value);
   uint8_t prWriteRegister(uint16_t address,uint16_t* value);
 
-  #endif
+#endif
