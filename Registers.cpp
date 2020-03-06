@@ -46,29 +46,32 @@ uint8_t ReadVersionReg(uint16_t address,uint16_t* value)
   switch(address)
   {
     case 0:
-      *value=(VDATE[0]<<8)|(VDATE[1]);
+      *value=(PROJECT_ID[0]<<8)|(PROJECT_ID[1]);
       break;
     case 1:
-      *value=(VDATE[2]<<8)|(VDATE[4]);
+      *value=(VDATE[0]<<8)|(VDATE[1]);
       break;
     case 2:
-      *value=(VDATE[5]<<8)|(VDATE[7]);
+      *value=(VDATE[2]<<8)|(VDATE[4]);
       break;
     case 3:
-      *value=(VDATE[8]<<8)|(VDATE[9]);
+      *value=(VDATE[5]<<8)|(VDATE[7]);
       break;
     case 4:
-      *value=(VDATE[10]<<8)|(' ');
+      *value=(VDATE[8]<<8)|(VDATE[9]);
       break;
     case 5:
-      *value=(VTIME[0]<<8)|(VTIME[1]);
+      *value=(VDATE[10]<<8)|(' ');
       break;
     case 6:
-      *value=(VTIME[3]<<8)|(VTIME[4]);
+      *value=(VTIME[0]<<8)|(VTIME[1]);
       break;
     case 7:
-      *value=(VTIME[6]<<8)|(VTIME[7]);
+      *value=(VTIME[3]<<8)|(VTIME[4]);
       break;
+    case 8:
+      *value=(VTIME[6]<<8)|(VTIME[7]);
+      break;    
     default:
       return EXCEPTION_INVALID_ADDRESS;
   }
@@ -116,7 +119,11 @@ uint8_t WriteFuncCoil(uint16_t address,uint16_t* value)
     switch (address)
     {
       case 0x0000:
-        if (!cl_ds.isRunning &&
+        if (cl_ds.halted == HALTED_PAUSED)
+        {
+          result=clStart();
+        }
+        else if (!cl_ds.isRunning &&
             cl_ds.defaultOffline &&
             ConfigFromEeprom(0, MB_SETTING_SIZE, mb_ds.settings))
         {
