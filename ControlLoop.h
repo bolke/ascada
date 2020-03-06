@@ -19,7 +19,7 @@
         uint16_t halted:2;
         uint16_t unexpectedShutdown:3;
         uint16_t configLoaded:1;
-		uint16_t alarmAvailable:1;
+        uint16_t alarmAvailable:1;
       };
       uint16_t status = 0;
     };
